@@ -3,42 +3,34 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { CalendarIcon, MapPinIcon } from 'lucide-react'
 import Link from 'next/link'
 import { Layout } from '@/components/layout'
+import { format, isPast } from 'date-fns'
+import { Tables } from '@/database.types'
 
-export function EventList() {
-  const events = [
-    {
-      id: 1,
-      name: 'IFSC Boulder World Cup',
-      location: 'Meiringen, Switzerland',
-      startDate: '2024-04-15',
-      endDate: '2024-04-17',
-      status: 'upcoming',
-    },
-    {
-      id: 2,
-      name: 'IFSC Lead World Cup',
-      location: 'Villars, Switzerland',
-      startDate: '2024-07-01',
-      endDate: '2024-07-03',
-      status: 'upcoming',
-    },
-    {
-      id: 3,
-      name: 'IFSC Speed World Cup',
-      location: 'Seoul, South Korea',
-      startDate: '2023-10-06',
-      endDate: '2023-10-08',
-      status: 'previous',
-    },
-    {
-      id: 4,
-      name: 'IFSC Combined World Cup',
-      location: 'Innsbruck, Austria',
-      startDate: '2023-06-21',
-      endDate: '2023-06-25',
-      status: 'previous',
-    },
-  ]
+function EventCard({ event }: { event: any }) {
+  return (
+    <Link href={`/events/${event.id}`} key={event.id}>
+      <Card className="cursor-pointer hover:bg-accent">
+        <CardHeader>
+          <CardTitle className="text-lg">{event.name}</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <p className="flex items-center text-sm text-muted-foreground">
+            <MapPinIcon className="mr-2 h-4 w-4" />
+            {event.location}
+          </p>
+          <p className="flex items-center text-sm text-muted-foreground mt-2">
+            <CalendarIcon className="mr-2 h-4 w-4" />
+            {format(event.startedAt, 'PPPP')} - {format(event.endedAt, 'PPPP')}
+          </p>
+        </CardContent>
+      </Card>
+    </Link>
+  )
+}
+
+export function EventList({ events }: { events: Tables<'events'>[] }) {
+  const previousEvents = events.filter((event) => isPast(event.endedAt))
+  const upcomingEvents = events.filter((event) => !isPast(event.endedAt))
 
   const stickyHeader = (
     <TabsList className="grid w-full grid-cols-2">
@@ -52,52 +44,16 @@ export function EventList() {
       <Layout title="Climbing Events" stickyHeader={stickyHeader}>
         <TabsContent value="upcoming">
           <div className="grid gap-4 grid-cols-1">
-            {events
-              .filter((event) => event.status === 'upcoming')
-              .map((event) => (
-                <Link href={`/events/${event.id}`} key={event.id}>
-                  <Card className="cursor-pointer hover:bg-accent">
-                    <CardHeader>
-                      <CardTitle className="text-lg">{event.name}</CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                      <p className="flex items-center text-sm text-muted-foreground">
-                        <MapPinIcon className="mr-2 h-4 w-4" />
-                        {event.location}
-                      </p>
-                      <p className="flex items-center text-sm text-muted-foreground mt-2">
-                        <CalendarIcon className="mr-2 h-4 w-4" />
-                        {event.startDate} - {event.endDate}
-                      </p>
-                    </CardContent>
-                  </Card>
-                </Link>
-              ))}
+            {upcomingEvents.map((event) => (
+              <EventCard event={event} key={event.id} />
+            ))}
           </div>
         </TabsContent>
         <TabsContent value="previous">
           <div className="grid gap-4 grid-cols-1">
-            {events
-              .filter((event) => event.status === 'previous')
-              .map((event) => (
-                <Link href={`/events/${event.id}`} key={event.id}>
-                  <Card className="cursor-pointer hover:bg-accent">
-                    <CardHeader>
-                      <CardTitle className="text-lg">{event.name}</CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                      <p className="flex items-center text-sm text-muted-foreground">
-                        <MapPinIcon className="mr-2 h-4 w-4" />
-                        {event.location}
-                      </p>
-                      <p className="flex items-center text-sm text-muted-foreground mt-2">
-                        <CalendarIcon className="mr-2 h-4 w-4" />
-                        {event.startDate} - {event.endDate}
-                      </p>
-                    </CardContent>
-                  </Card>
-                </Link>
-              ))}
+            {previousEvents.map((event) => (
+              <EventCard event={event} key={event.id} />
+            ))}
           </div>
         </TabsContent>
       </Layout>

@@ -13,6 +13,10 @@ function EventCard({ event }: { event: any }) {
 export default async function Home() {
   const supabase = createClient()
   const { data: events } = await supabase.from('events').select()
+  console.info(events)
+  if (!events) {
+    return <div>No events found</div>
+  }
 
-  return <EventList />
+  return <EventList events={events} />
 }
