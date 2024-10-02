@@ -5,12 +5,16 @@ import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
 import { Label } from '@/components/ui/label'
 import {
-  Accordion,
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger,
-} from '@/components/ui/accordion'
-import { Plus } from 'lucide-react'
+  Drawer,
+  DrawerClose,
+  DrawerContent,
+  DrawerDescription,
+  DrawerFooter,
+  DrawerHeader,
+  DrawerTitle,
+  DrawerTrigger,
+} from '@/components/ui/drawer'
+import { Plus, Minus, Trash2 } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import { createClient } from '@/utils/supabase/client'
 
@@ -96,10 +100,20 @@ export default function CreateEventPage() {
   const [startDate, setStartDate] = useState('')
   const [endDate, setEndDate] = useState('')
   const [programs, setPrograms] = useState<CompeteProgram[]>([])
+  const [isAddProgramOpen, setIsAddProgramOpen] = useState(false)
+  const [isAddRoundOpen, setIsAddRoundOpen] = useState(false)
+  const [newProgramName, setNewProgramName] = useState('')
+  const [newRoundName, setNewRoundName] = useState('')
+  const [newRoundRouteAmount, setNewRoundRouteAmount] = useState(4) // Changed initial value to 10
+  const [currentProgramIndex, setCurrentProgramIndex] = useState(-1)
   const router = useRouter()
 
   const addProgram = () => {
-    setPrograms([...programs, { name: '', rounds: [] }])
+    if (newProgramName) {
+      setPrograms([...programs, { name: newProgramName, rounds: [] }])
+      setNewProgramName('')
+      setIsAddProgramOpen(false)
+    }
   }
 
   const updateProgram = (index: number, name: string) => {
@@ -108,10 +122,24 @@ export default function CreateEventPage() {
     setPrograms(newPrograms)
   }
 
-  const addRound = (programIndex: number) => {
+  const deleteProgram = (index: number) => {
     const newPrograms = [...programs]
-    newPrograms[programIndex].rounds.push({ name: '', routeAmount: 0 })
+    newPrograms.splice(index, 1)
     setPrograms(newPrograms)
+  }
+
+  const addRound = () => {
+    if (newRoundName && currentProgramIndex !== -1) {
+      const newPrograms = [...programs]
+      newPrograms[currentProgramIndex].rounds.push({
+        name: newRoundName,
+        routeAmount: newRoundRouteAmount,
+      })
+      setPrograms(newPrograms)
+      setNewRoundName('')
+      setNewRoundRouteAmount(1)
+      setIsAddRoundOpen(false)
+    }
   }
 
   const updateRound = (
@@ -123,6 +151,18 @@ export default function CreateEventPage() {
     const newPrograms = [...programs]
     newPrograms[programIndex].rounds[roundIndex][field] = value as never
     setPrograms(newPrograms)
+  }
+
+  const deleteRound = (programIndex: number, roundIndex: number) => {
+    const newPrograms = [...programs]
+    newPrograms[programIndex].rounds.splice(roundIndex, 1)
+    setPrograms(newPrograms)
+  }
+
+  const adjustRouteAmount = (increment: number) => {
+    setNewRoundRouteAmount(
+      Math.max(1, Math.min(50, newRoundRouteAmount + increment)),
+    )
   }
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -142,7 +182,7 @@ export default function CreateEventPage() {
       setStartDate('')
       setEndDate('')
       setPrograms([])
-      // router.push('/cms/events')
+      router.push('/cms/events')
     } catch (error) {
       console.error('Error creating event:', error)
       // Here you might want to show an error message to the user
@@ -161,6 +201,7 @@ export default function CreateEventPage() {
               value={eventName}
               onChange={(e) => setEventName(e.target.value)}
               required
+              className="text-base sm:text-sm" // Increased font size for mobile
             />
           </div>
           <div>
@@ -170,6 +211,7 @@ export default function CreateEventPage() {
               value={eventLocation}
               onChange={(e) => setEventLocation(e.target.value)}
               required
+              className="text-base sm:text-sm" // Increased font size for mobile
             />
           </div>
           <div>
@@ -180,6 +222,7 @@ export default function CreateEventPage() {
               value={startDate}
               onChange={(e) => setStartDate(e.target.value)}
               required
+              className="text-base sm:text-sm" // Increased font size for mobile
             />
           </div>
           <div>
@@ -190,103 +233,210 @@ export default function CreateEventPage() {
               value={endDate}
               onChange={(e) => setEndDate(e.target.value)}
               required
+              className="text-base sm:text-sm" // Increased font size for mobile
             />
           </div>
         </div>
 
         <div>
           <h3 className="text-lg font-semibold mb-2">Compete Programs</h3>
-          <Accordion type="multiple" className="w-full">
+          <div className="space-y-4">
             {programs.map((program, programIndex) => (
-              <AccordionItem
-                value={`program-${programIndex}`}
-                key={programIndex}
-              >
-                <AccordionTrigger>
-                  {program.name || `Program ${programIndex + 1}`}
-                </AccordionTrigger>
-                <AccordionContent>
-                  <div className="space-y-4">
-                    <div>
-                      <Label htmlFor={`program-${programIndex}-name`}>
-                        Program Name
-                      </Label>
+              <div key={programIndex} className="border p-4 rounded-md">
+                <div className="flex items-center justify-between mb-2">
+                  <h4 className="text-md font-semibold">
+                    {program.name || `Program ${programIndex + 1}`}
+                  </h4>
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => deleteProgram(programIndex)}
+                  >
+                    <Trash2 className="h-4 w-4" />
+                  </Button>
+                </div>
+                <Input
+                  value={program.name}
+                  onChange={(e) => updateProgram(programIndex, e.target.value)}
+                  placeholder="Program Name"
+                  className="mb-2 text-base sm:text-sm"
+                />
+                <div className="space-y-2">
+                  <h5 className="text-sm font-semibold">Rounds</h5>
+                  {program.rounds.map((round, roundIndex) => (
+                    <div
+                      key={roundIndex}
+                      className="flex items-center space-x-2"
+                    >
                       <Input
-                        id={`program-${programIndex}-name`}
-                        value={program.name}
+                        value={round.name}
                         onChange={(e) =>
-                          updateProgram(programIndex, e.target.value)
+                          updateRound(
+                            programIndex,
+                            roundIndex,
+                            'name',
+                            e.target.value,
+                          )
                         }
-                        required
+                        placeholder="Round Name"
+                        className="flex-grow text-base sm:text-sm"
                       />
-                    </div>
-                    <div>
-                      <h4 className="text-md font-semibold mb-2">Rounds</h4>
-                      {program.rounds.map((round, roundIndex) => (
-                        <div
-                          key={roundIndex}
-                          className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4"
-                        >
-                          <div>
-                            <Label
-                              htmlFor={`program-${programIndex}-round-${roundIndex}-name`}
-                            >
-                              Round Name
-                            </Label>
-                            <Input
-                              id={`program-${programIndex}-round-${roundIndex}-name`}
-                              value={round.name}
-                              onChange={(e) =>
-                                updateRound(
-                                  programIndex,
-                                  roundIndex,
-                                  'name',
-                                  e.target.value,
-                                )
-                              }
-                              required
-                            />
-                          </div>
-                          <div>
-                            <Label
-                              htmlFor={`program-${programIndex}-round-${roundIndex}-routes`}
-                            >
-                              Number of Routes
-                            </Label>
-                            <Input
-                              id={`program-${programIndex}-round-${roundIndex}-routes`}
-                              type="number"
-                              value={round.routeAmount}
-                              onChange={(e) =>
-                                updateRound(
-                                  programIndex,
-                                  roundIndex,
-                                  'routeAmount',
-                                  parseInt(e.target.value),
-                                )
-                              }
-                              required
-                            />
-                          </div>
-                        </div>
-                      ))}
+                      <Input
+                        type="number"
+                        value={round.routeAmount}
+                        onChange={(e) =>
+                          updateRound(
+                            programIndex,
+                            roundIndex,
+                            'routeAmount',
+                            parseInt(e.target.value),
+                          )
+                        }
+                        className="w-20 text-base sm:text-sm"
+                      />
                       <Button
                         type="button"
-                        onClick={() => addRound(programIndex)}
-                        className="mt-2"
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => deleteRound(programIndex, roundIndex)}
                       >
-                        <Plus className="mr-2 h-4 w-4" /> Add Round
+                        <Trash2 className="h-4 w-4" />
+                      </Button>
+                    </div>
+                  ))}
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    onClick={() => {
+                      setCurrentProgramIndex(programIndex)
+                      setIsAddRoundOpen(true)
+                    }}
+                  >
+                    <Plus className="mr-2 h-4 w-4" /> Add Round
+                  </Button>
+                </div>
+              </div>
+            ))}
+          </div>
+          <Drawer open={isAddProgramOpen} onOpenChange={setIsAddProgramOpen}>
+            <DrawerTrigger asChild>
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => setIsAddProgramOpen(true)}
+                className="mt-4"
+              >
+                <Plus className="mr-2 h-4 w-4" /> Add Program
+              </Button>
+            </DrawerTrigger>
+            <DrawerContent>
+              <div className="max-h-[85vh] overflow-y-auto">
+                <DrawerHeader>
+                  <DrawerTitle>Add New Program</DrawerTitle>
+                  <DrawerDescription>
+                    Enter the name for the new program.
+                  </DrawerDescription>
+                </DrawerHeader>
+                <form
+                  onSubmit={(e) => {
+                    e.preventDefault()
+                    addProgram()
+                  }}
+                >
+                  <div className="p-4">
+                    <Label htmlFor="newProgramName">Program Name</Label>
+                    <Input
+                      id="newProgramName"
+                      value={newProgramName}
+                      onChange={(e) => setNewProgramName(e.target.value)}
+                      placeholder="Enter program name"
+                      className="text-base sm:text-sm mb-4"
+                      autoFocus
+                    />
+                    <Button type="submit" className="w-full">
+                      Add Program
+                    </Button>
+                  </div>
+                </form>
+              </div>
+            </DrawerContent>
+          </Drawer>
+        </div>
+
+        <Drawer open={isAddRoundOpen} onOpenChange={setIsAddRoundOpen}>
+          <DrawerContent>
+            <div className="max-h-[85vh] overflow-y-auto">
+              <DrawerHeader>
+                <DrawerTitle>Add New Round</DrawerTitle>
+                <DrawerDescription>
+                  Enter the details for the new round.
+                </DrawerDescription>
+              </DrawerHeader>
+              <form
+                onSubmit={(e) => {
+                  e.preventDefault()
+                  addRound()
+                }}
+              >
+                <div className="p-4 space-y-4">
+                  <div>
+                    <Label htmlFor="newRoundName">Round Name</Label>
+                    <Input
+                      id="newRoundName"
+                      value={newRoundName}
+                      onChange={(e) => setNewRoundName(e.target.value)}
+                      placeholder="Enter round name"
+                      className="text-base sm:text-sm"
+                      autoFocus
+                    />
+                  </div>
+                  <div>
+                    <Label htmlFor="newRoundRouteAmount">
+                      Number of Routes
+                    </Label>
+                    <div className="flex items-center justify-center space-x-2 mt-2">
+                      <Button
+                        type="button"
+                        variant="outline"
+                        size="icon"
+                        className="h-8 w-8 shrink-0 rounded-full"
+                        onClick={() => adjustRouteAmount(-1)}
+                        disabled={newRoundRouteAmount <= 1}
+                      >
+                        <Minus className="h-4 w-4" />
+                        <span className="sr-only">Decrease</span>
+                      </Button>
+                      <div className="flex-1 text-center">
+                        <div className="text-5xl sm:text-7xl font-bold tracking-tighter">
+                          {newRoundRouteAmount}
+                        </div>
+                        <div className="text-[0.70rem] uppercase text-muted-foreground">
+                          Routes/round
+                        </div>
+                      </div>
+                      <Button
+                        type="button"
+                        variant="outline"
+                        size="icon"
+                        className="h-8 w-8 shrink-0 rounded-full"
+                        onClick={() => adjustRouteAmount(1)}
+                        disabled={newRoundRouteAmount >= 50}
+                      >
+                        <Plus className="h-4 w-4" />
+                        <span className="sr-only">Increase</span>
                       </Button>
                     </div>
                   </div>
-                </AccordionContent>
-              </AccordionItem>
-            ))}
-          </Accordion>
-          <Button type="button" onClick={addProgram} className="mt-4">
-            <Plus className="mr-2 h-4 w-4" /> Add Program
-          </Button>
-        </div>
+                  <Button type="submit" className="w-full">
+                    Add Round
+                  </Button>
+                </div>
+              </form>
+            </div>
+          </DrawerContent>
+        </Drawer>
 
         <Button type="submit">Create Event</Button>
       </form>
