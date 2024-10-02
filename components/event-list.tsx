@@ -1,5 +1,4 @@
 'use client'
-
 import { useState } from 'react'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
@@ -45,13 +44,18 @@ export function EventList() {
     },
   ]
 
+  const stickyHeader = (
+    <Tabs defaultValue="upcoming" className="w-full">
+      <TabsList className="grid w-full grid-cols-2">
+        <TabsTrigger value="upcoming">Upcoming</TabsTrigger>
+        <TabsTrigger value="previous">Previous</TabsTrigger>
+      </TabsList>
+    </Tabs>
+  )
+
   return (
-    <Layout title="Climbing Events">
+    <Layout title="Climbing Events" stickyHeader={stickyHeader}>
       <Tabs defaultValue="upcoming" className="w-full">
-        <TabsList className="grid w-full grid-cols-2">
-          <TabsTrigger value="upcoming">Upcoming</TabsTrigger>
-          <TabsTrigger value="previous">Previous</TabsTrigger>
-        </TabsList>
         <TabsContent value="upcoming">
           <div className="grid gap-4 grid-cols-1">
             {events

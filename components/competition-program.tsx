@@ -42,16 +42,25 @@ export function CompetitionProgram() {
     ],
   }
 
+  const stickyHeader = (
+    <Tabs defaultValue="qualification" className="w-full">
+      <TabsList className="grid w-full grid-cols-3">
+        {program.rounds.map((round) => (
+          <TabsTrigger key={round.name} value={round.name.toLowerCase()}>
+            {round.name}
+          </TabsTrigger>
+        ))}
+      </TabsList>
+    </Tabs>
+  )
+
   return (
-    <Layout title={program.name} backLink={`/events/${program.eventId}`}>
+    <Layout
+      title={program.name}
+      backLink={`/events/${program.eventId}`}
+      stickyHeader={stickyHeader}
+    >
       <Tabs defaultValue="qualification" className="w-full">
-        <TabsList className="grid w-full grid-cols-3">
-          {program.rounds.map((round) => (
-            <TabsTrigger key={round.name} value={round.name.toLowerCase()}>
-              {round.name}
-            </TabsTrigger>
-          ))}
-        </TabsList>
         {program.rounds.map((round) => (
           <TabsContent key={round.name} value={round.name.toLowerCase()}>
             <div className="overflow-x-auto">
