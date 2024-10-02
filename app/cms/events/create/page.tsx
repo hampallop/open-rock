@@ -1,19 +1,17 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useCallback } from 'react'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
 import { Label } from '@/components/ui/label'
 import {
-  Drawer,
-  DrawerClose,
-  DrawerContent,
-  DrawerDescription,
-  DrawerFooter,
-  DrawerHeader,
-  DrawerTitle,
-  DrawerTrigger,
-} from '@/components/ui/drawer'
+  Sheet,
+  SheetContent,
+  SheetDescription,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from '@/components/ui/sheet'
 import { Plus, Minus, Trash2 } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import { createClient } from '@/utils/supabase/client'
@@ -107,6 +105,23 @@ export default function CreateEventPage() {
   const [newRoundRouteAmount, setNewRoundRouteAmount] = useState(4) // Changed initial value to 10
   const [currentProgramIndex, setCurrentProgramIndex] = useState(-1)
   const router = useRouter()
+
+  const handleInputBlur = useCallback(() => {
+    if (document.activeElement instanceof HTMLElement) {
+      document.activeElement.blur()
+    }
+  }, [])
+
+  const handleFormSubmit = useCallback(
+    (submitFunction: () => void) => {
+      return (e: React.FormEvent) => {
+        e.preventDefault()
+        handleInputBlur()
+        setTimeout(submitFunction, 100)
+      }
+    },
+    [handleInputBlur],
+  )
 
   const addProgram = () => {
     if (newProgramName) {
@@ -320,8 +335,8 @@ export default function CreateEventPage() {
               </div>
             ))}
           </div>
-          <Drawer open={isAddProgramOpen} onOpenChange={setIsAddProgramOpen}>
-            <DrawerTrigger asChild>
+          <Sheet open={isAddProgramOpen} onOpenChange={setIsAddProgramOpen}>
+            <SheetTrigger asChild>
               <Button
                 type="button"
                 variant="outline"
@@ -330,113 +345,103 @@ export default function CreateEventPage() {
               >
                 <Plus className="mr-2 h-4 w-4" /> Add Program
               </Button>
-            </DrawerTrigger>
-            <DrawerContent>
-              <div className="max-h-[85vh] overflow-y-auto">
-                <DrawerHeader>
-                  <DrawerTitle>Add New Program</DrawerTitle>
-                  <DrawerDescription>
-                    Enter the name for the new program.
-                  </DrawerDescription>
-                </DrawerHeader>
-                <form
-                  onSubmit={(e) => {
-                    e.preventDefault()
-                    addProgram()
-                  }}
-                >
-                  <div className="p-4">
-                    <Label htmlFor="newProgramName">Program Name</Label>
-                    <Input
-                      id="newProgramName"
-                      value={newProgramName}
-                      onChange={(e) => setNewProgramName(e.target.value)}
-                      placeholder="Enter program name"
-                      className="text-base sm:text-sm mb-4"
-                      autoFocus
-                    />
-                    <Button type="submit" className="w-full">
-                      Add Program
-                    </Button>
-                  </div>
-                </form>
-              </div>
-            </DrawerContent>
-          </Drawer>
+            </SheetTrigger>
+            <SheetContent>
+              <SheetHeader>
+                <SheetTitle>Add New Program</SheetTitle>
+                <SheetDescription>
+                  Enter the name for the new program.
+                </SheetDescription>
+              </SheetHeader>
+              <form
+                onSubmit={handleFormSubmit(addProgram)}
+                className="space-y-4 mt-4"
+              >
+                <div>
+                  <Label htmlFor="newProgramName">Program Name</Label>
+                  <Input
+                    id="newProgramName"
+                    value={newProgramName}
+                    onChange={(e) => setNewProgramName(e.target.value)}
+                    onBlur={handleInputBlur}
+                    placeholder="Enter program name"
+                    className="text-base sm:text-sm"
+                    autoFocus
+                  />
+                </div>
+                <Button type="submit" className="w-full">
+                  Add Program
+                </Button>
+              </form>
+            </SheetContent>
+          </Sheet>
         </div>
 
-        <Drawer open={isAddRoundOpen} onOpenChange={setIsAddRoundOpen}>
-          <DrawerContent>
-            <div className="max-h-[85vh] overflow-y-auto">
-              <DrawerHeader>
-                <DrawerTitle>Add New Round</DrawerTitle>
-                <DrawerDescription>
-                  Enter the details for the new round.
-                </DrawerDescription>
-              </DrawerHeader>
-              <form
-                onSubmit={(e) => {
-                  e.preventDefault()
-                  addRound()
-                }}
-              >
-                <div className="p-4 space-y-4">
-                  <div>
-                    <Label htmlFor="newRoundName">Round Name</Label>
-                    <Input
-                      id="newRoundName"
-                      value={newRoundName}
-                      onChange={(e) => setNewRoundName(e.target.value)}
-                      placeholder="Enter round name"
-                      className="text-base sm:text-sm"
-                      autoFocus
-                    />
-                  </div>
-                  <div>
-                    <Label htmlFor="newRoundRouteAmount">
-                      Number of Routes
-                    </Label>
-                    <div className="flex items-center justify-center space-x-2 mt-2">
-                      <Button
-                        type="button"
-                        variant="outline"
-                        size="icon"
-                        className="h-8 w-8 shrink-0 rounded-full"
-                        onClick={() => adjustRouteAmount(-1)}
-                        disabled={newRoundRouteAmount <= 1}
-                      >
-                        <Minus className="h-4 w-4" />
-                        <span className="sr-only">Decrease</span>
-                      </Button>
-                      <div className="flex-1 text-center">
-                        <div className="text-5xl sm:text-7xl font-bold tracking-tighter">
-                          {newRoundRouteAmount}
-                        </div>
-                        <div className="text-[0.70rem] uppercase text-muted-foreground">
-                          Routes/round
-                        </div>
-                      </div>
-                      <Button
-                        type="button"
-                        variant="outline"
-                        size="icon"
-                        className="h-8 w-8 shrink-0 rounded-full"
-                        onClick={() => adjustRouteAmount(1)}
-                        disabled={newRoundRouteAmount >= 50}
-                      >
-                        <Plus className="h-4 w-4" />
-                        <span className="sr-only">Increase</span>
-                      </Button>
+        <Sheet open={isAddRoundOpen} onOpenChange={setIsAddRoundOpen}>
+          <SheetContent>
+            <SheetHeader>
+              <SheetTitle>Add New Round</SheetTitle>
+              <SheetDescription>
+                Enter the details for the new round.
+              </SheetDescription>
+            </SheetHeader>
+            <form
+              onSubmit={handleFormSubmit(addRound)}
+              className="space-y-4 mt-4"
+            >
+              <div>
+                <Label htmlFor="newRoundName">Round Name</Label>
+                <Input
+                  id="newRoundName"
+                  value={newRoundName}
+                  onChange={(e) => setNewRoundName(e.target.value)}
+                  onBlur={handleInputBlur}
+                  placeholder="Enter round name"
+                  className="text-base sm:text-sm"
+                  autoFocus
+                />
+              </div>
+              <div>
+                <Label htmlFor="newRoundRouteAmount">Number of Routes</Label>
+                <div className="flex items-center justify-center space-x-2 mt-2">
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="icon"
+                    className="h-8 w-8 shrink-0 rounded-full"
+                    onClick={() => adjustRouteAmount(-1)}
+                    disabled={newRoundRouteAmount <= 1}
+                  >
+                    <Minus className="h-4 w-4" />
+                    <span className="sr-only">Decrease</span>
+                  </Button>
+                  <div className="flex-1 text-center">
+                    <div className="text-5xl sm:text-7xl font-bold tracking-tighter">
+                      {newRoundRouteAmount}
+                    </div>
+                    <div className="text-[0.70rem] uppercase text-muted-foreground">
+                      Routes/round
                     </div>
                   </div>
-                  <Button type="submit" className="w-full">
-                    Add Round
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="icon"
+                    className="h-8 w-8 shrink-0 rounded-full"
+                    onClick={() => adjustRouteAmount(1)}
+                    disabled={newRoundRouteAmount >= 50}
+                  >
+                    <Plus className="h-4 w-4" />
+                    <span className="sr-only">Increase</span>
                   </Button>
                 </div>
-              </form>
-            </div>
-          </DrawerContent>
-        </Drawer>
+              </div>
+              <Button type="submit" className="w-full">
+                Add Round
+              </Button>
+            </form>
+          </SheetContent>
+        </Sheet>
 
         <Button type="submit">Create Event</Button>
       </form>
