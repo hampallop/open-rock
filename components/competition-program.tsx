@@ -1,6 +1,3 @@
-'use client'
-
-import { useState } from 'react'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import {
   Table,
@@ -13,8 +10,6 @@ import {
 import { Layout } from '@/components/layout'
 
 export function CompetitionProgram() {
-  const [activeTab, setActiveTab] = useState('qualification')
-
   const program = {
     id: 1,
     name: 'Boulder Male',
@@ -43,24 +38,22 @@ export function CompetitionProgram() {
   }
 
   const stickyHeader = (
-    <Tabs defaultValue="qualification" className="w-full">
-      <TabsList className="grid w-full grid-cols-3">
-        {program.rounds.map((round) => (
-          <TabsTrigger key={round.name} value={round.name.toLowerCase()}>
-            {round.name}
-          </TabsTrigger>
-        ))}
-      </TabsList>
-    </Tabs>
+    <TabsList className="grid w-full grid-cols-3">
+      {program.rounds.map((round) => (
+        <TabsTrigger key={round.name} value={round.name.toLowerCase()}>
+          {round.name}
+        </TabsTrigger>
+      ))}
+    </TabsList>
   )
 
   return (
-    <Layout
-      title={program.name}
-      backLink={`/events/${program.eventId}`}
-      stickyHeader={stickyHeader}
-    >
-      <Tabs defaultValue="qualification" className="w-full">
+    <Tabs defaultValue="qualification" className="w-full">
+      <Layout
+        title={program.name}
+        backLink={`/events/${program.eventId}`}
+        stickyHeader={stickyHeader}
+      >
         {program.rounds.map((round) => (
           <TabsContent key={round.name} value={round.name.toLowerCase()}>
             <div className="overflow-x-auto">
@@ -89,7 +82,7 @@ export function CompetitionProgram() {
             </div>
           </TabsContent>
         ))}
-      </Tabs>
-    </Layout>
+      </Layout>
+    </Tabs>
   )
 }

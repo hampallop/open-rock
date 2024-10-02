@@ -1,5 +1,3 @@
-'use client'
-import { useState } from 'react'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { CalendarIcon, MapPinIcon } from 'lucide-react'
@@ -7,8 +5,6 @@ import Link from 'next/link'
 import { Layout } from '@/components/layout'
 
 export function EventList() {
-  const [activeTab, setActiveTab] = useState('upcoming')
-
   const events = [
     {
       id: 1,
@@ -45,17 +41,15 @@ export function EventList() {
   ]
 
   const stickyHeader = (
-    <Tabs defaultValue="upcoming" className="w-full">
-      <TabsList className="grid w-full grid-cols-2">
-        <TabsTrigger value="upcoming">Upcoming</TabsTrigger>
-        <TabsTrigger value="previous">Previous</TabsTrigger>
-      </TabsList>
-    </Tabs>
+    <TabsList className="grid w-full grid-cols-2">
+      <TabsTrigger value="upcoming">Upcoming</TabsTrigger>
+      <TabsTrigger value="previous">Previous</TabsTrigger>
+    </TabsList>
   )
 
   return (
-    <Layout title="Climbing Events" stickyHeader={stickyHeader}>
-      <Tabs defaultValue="upcoming" className="w-full">
+    <Tabs defaultValue="upcoming" className="w-full">
+      <Layout title="Climbing Events" stickyHeader={stickyHeader}>
         <TabsContent value="upcoming">
           <div className="grid gap-4 grid-cols-1">
             {events
@@ -106,7 +100,7 @@ export function EventList() {
               ))}
           </div>
         </TabsContent>
-      </Tabs>
-    </Layout>
+      </Layout>
+    </Tabs>
   )
 }
