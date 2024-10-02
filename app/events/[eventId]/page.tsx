@@ -10,8 +10,9 @@ function queryEventWithCompetePrograms(eventId: string) {
     .eq('id', eventId)
     .single()
 }
-type QueryReturn = ReturnType<typeof queryEventWithCompetePrograms>
-export type EventWithCompetePrograms = QueryData<QueryReturn>
+export type EventWithCompetePrograms = QueryData<
+  ReturnType<typeof queryEventWithCompetePrograms>
+>
 
 export default async function EventPage({
   params,

@@ -113,7 +113,7 @@ export type Database = {
           createdAt: string
           endedAt: string | null
           id: string
-          name: string | null
+          name: string
           routeAmount: number | null
           startedAt: string | null
           type: string | null
@@ -125,7 +125,7 @@ export type Database = {
           createdAt?: string
           endedAt?: string | null
           id?: string
-          name?: string | null
+          name: string
           routeAmount?: number | null
           startedAt?: string | null
           type?: string | null
@@ -137,7 +137,7 @@ export type Database = {
           createdAt?: string
           endedAt?: string | null
           id?: string
-          name?: string | null
+          name?: string
           routeAmount?: number | null
           startedAt?: string | null
           type?: string | null

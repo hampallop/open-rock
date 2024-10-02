@@ -8,39 +8,17 @@ import {
   TableRow,
 } from '@/components/ui/table'
 import { Layout } from '@/components/layout'
+import { CompeteProgramWithCompeteRounds } from '@/app/events/[eventId]/programs/[programId]/page'
 
-export function CompetitionProgram() {
-  const program = {
-    id: 1,
-    name: 'Boulder Male',
-    eventId: 1,
-    rounds: [
-      {
-        name: 'Qualification',
-        athletes: [
-          { id: 1, name: 'John Doe', country: 'USA', score: 4 },
-          { id: 2, name: 'Jane Smith', country: 'GBR', score: 3 },
-          { id: 3, name: 'Alex Johnson', country: 'FRA', score: 5 },
-        ],
-      },
-      {
-        name: 'Semi-Final',
-        athletes: [
-          { id: 1, name: 'John Doe', country: 'USA', score: 3 },
-          { id: 3, name: 'Alex Johnson', country: 'FRA', score: 4 },
-        ],
-      },
-      {
-        name: 'Final',
-        athletes: [{ id: 3, name: 'Alex Johnson', country: 'FRA', score: 2 }],
-      },
-    ],
-  }
-
+export function CompetitionProgram({
+  competeProgram,
+}: {
+  competeProgram: CompeteProgramWithCompeteRounds
+}) {
   const stickyHeader = (
     <TabsList className="grid w-full grid-cols-3">
-      {program.rounds.map((round) => (
-        <TabsTrigger key={round.name} value={round.name.toLowerCase()}>
+      {competeProgram.competeRounds.map((round) => (
+        <TabsTrigger key={round.id} value={round.name}>
           {round.name}
         </TabsTrigger>
       ))}
@@ -48,33 +26,40 @@ export function CompetitionProgram() {
   )
 
   return (
-    <Tabs defaultValue="qualification" className="w-full">
+    <Tabs
+      defaultValue={competeProgram.competeRounds[0]?.name}
+      className="w-full"
+    >
       <Layout
-        title={program.name}
-        backLink={`/events/${program.eventId}`}
+        title={competeProgram.name}
+        backLink={`/events/${competeProgram.eventId}`}
         stickyHeader={stickyHeader}
       >
-        {program.rounds.map((round) => (
-          <TabsContent key={round.name} value={round.name.toLowerCase()}>
+        {competeProgram.competeRounds.map((round) => (
+          <TabsContent key={round.id} value={round.name}>
             <div className="overflow-x-auto">
               <Table>
                 <TableHeader>
                   <TableRow>
                     <TableHead className="w-[60px]">Rank</TableHead>
                     <TableHead>Name</TableHead>
-                    <TableHead>Country</TableHead>
-                    <TableHead className="w-[80px] text-right">Score</TableHead>
+                    {Array.from({ length: round.routeAmount || 0 }, (_, i) => (
+                      <TableHead key={i} className="w-[80px] text-right">
+                        Route {i + 1}
+                      </TableHead>
+                    ))}
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {round.athletes.map((athlete, index) => (
-                    <TableRow key={athlete.id}>
+                  {getAthleteResults(round).map((athleteResult, index) => (
+                    <TableRow key={athleteResult.athlete.id}>
                       <TableCell>{index + 1}</TableCell>
-                      <TableCell>{athlete.name}</TableCell>
-                      <TableCell>{athlete.country}</TableCell>
-                      <TableCell className="text-right">
-                        {athlete.score}
-                      </TableCell>
+                      <TableCell>{athleteResult.athlete.name}</TableCell>
+                      {athleteResult.scores.map((score, i) => (
+                        <TableCell key={i} className="text-right">
+                          {score}
+                        </TableCell>
+                      ))}
                     </TableRow>
                   ))}
                 </TableBody>
@@ -85,4 +70,27 @@ export function CompetitionProgram() {
       </Layout>
     </Tabs>
   )
+}
+
+function getAthleteResults(round: any) {
+  const athleteResults: { athlete: any; scores: string[] }[] = []
+
+  round.competeResults.forEach((result: any) => {
+    const existingAthlete = athleteResults.find(
+      (ar: any) => ar.athlete.id === result.athletes.id,
+    )
+
+    if (existingAthlete) {
+      existingAthlete.scores[result.routeNo - 1] = result.score
+    } else {
+      const newAthleteResult = {
+        athlete: result.athletes,
+        scores: Array(round.routeAmount).fill('-'),
+      }
+      newAthleteResult.scores[result.routeNo - 1] = result.score
+      athleteResults.push(newAthleteResult)
+    }
+  })
+
+  return athleteResults
 }
