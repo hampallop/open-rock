@@ -53,7 +53,7 @@ export function EventList() {
           <TabsTrigger value="previous">Previous</TabsTrigger>
         </TabsList>
         <TabsContent value="upcoming">
-          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          <div className="grid gap-4 grid-cols-1">
             {events
               .filter((event) => event.status === 'upcoming')
               .map((event) => (
@@ -78,7 +78,7 @@ export function EventList() {
           </div>
         </TabsContent>
         <TabsContent value="previous">
-          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          <div className="grid gap-4 grid-cols-1">
             {events
               .filter((event) => event.status === 'previous')
               .map((event) => (

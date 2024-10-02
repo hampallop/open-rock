@@ -11,7 +11,7 @@ interface LayoutProps {
 
 export function Layout({ children, backLink, title }: LayoutProps) {
   return (
-    <div className="min-h-screen bg-background">
+    <section className="min-h-screen max-w-screen-md mx-auto w-full bg-background">
       <header className="sticky top-0 z-10 border-b bg-background">
         <div className="container mx-auto px-4 py-4 flex items-center">
           {backLink && (
@@ -24,6 +24,6 @@ export function Layout({ children, backLink, title }: LayoutProps) {
         </div>
       </header>
       <main className="container mx-auto px-4 py-6">{children}</main>
-    </div>
+    </section>
   )
 }
