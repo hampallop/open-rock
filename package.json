@@ -1,9 +1,10 @@
 {
   "private": true,
   "scripts": {
-    "dev": "next dev",
+    "dev": "pnpm showIP && next dev",
     "build": "next build",
     "start": "next start",
+    "showIP": "echo \"Mobile: http://`ifconfig | grep \"inet \" | grep -v 127.0.0.1 | cut -d\\  -f2`:3000\\n\"",
     "update-types": "supabase gen types --lang=typescript --project-id \"$PROJECT_REF\" > database.types.ts && prettier database.types.ts --write"
   },
   "dependencies": {
