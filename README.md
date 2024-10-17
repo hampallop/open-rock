@@ -23,7 +23,7 @@
 
 Run the following command to generate the types:
 
-   ```bash
-   export PROJECT_REF=<your-project-ref>
-   pnpm update-types
-   ```
+```bash
+export PROJECT_REF=<your-project-ref>
+pnpm update-types
+```
