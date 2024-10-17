@@ -25,7 +25,6 @@ const roundOptions = [
   { id: 'qualifications', label: 'Qualifications' },
   { id: 'semi-final', label: 'Semi-Final' },
   { id: 'final', label: 'Final' },
-  { id: 'others', label: 'Others' },
 ]
 
 export default function CreateEventForm() {
@@ -34,21 +33,12 @@ export default function CreateEventForm() {
   const [eventLocation, setEventLocation] = useState('')
   const [startDate, setStartDate] = useState('')
   const [endDate, setEndDate] = useState('')
-  const [programCount, setProgramCount] = useState(1)
   const [programs, setPrograms] = useState<CompeteProgram[]>([
     { name: '', rounds: [] },
   ])
-  console.log('programs', programs)
   const router = useRouter()
 
   const handleNextStep = () => {
-    // if (step === 2) {
-    //   setPrograms(
-    //     Array(programCount)
-    //       .fill(null)
-    //       .map(() => ({ name: '', rounds: [] })),
-    //   )
-    // }
     setStep(step + 1)
   }
 

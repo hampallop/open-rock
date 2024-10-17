@@ -19,7 +19,7 @@ export default async function ProgramPage({
 }: {
   params: { eventId: string; programId: string }
 }) {
-  const { data: competeProgram, error } =
+  const { data: competeProgram, error: _error } =
     await queryCompeteProgramWithCompeteRounds(params.programId)
   console.log(JSON.stringify(competeProgram, null, 2))
   if (!competeProgram) {

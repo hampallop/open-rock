@@ -19,7 +19,7 @@ export default async function EventPage({
 }: {
   params: { eventId: string }
 }) {
-  const { data: event, error } = await queryEventWithCompetePrograms(
+  const { data: event, error: _error } = await queryEventWithCompetePrograms(
     params.eventId,
   )
 
