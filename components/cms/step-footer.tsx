@@ -6,6 +6,7 @@ interface StepFooterProps {
   onPrevious: () => void
   onNext: () => void
   onSubmit?: () => void
+  isNextValid?: boolean
 }
 
 export function StepFooter({
@@ -14,12 +15,13 @@ export function StepFooter({
   onPrevious,
   onNext,
   onSubmit,
+  isNextValid = false,
 }: StepFooterProps) {
   const isFirstStep = currentStep === 1
   const isLastStep = currentStep === totalSteps
 
   return (
-    <div className="h-20 w-full border flex items-center bg-card px-10 justify-between">
+    <div className="h-20 w-full border flex items-center bg-card px-5 justify-between">
       {!isFirstStep && (
         <Button variant="ghost" className="underline" onClick={onPrevious}>
           Previous
@@ -29,7 +31,9 @@ export function StepFooter({
       {isLastStep ? (
         <Button onClick={onSubmit}>Save</Button>
       ) : (
-        <Button onClick={onNext}>Next</Button>
+        <Button onClick={onNext} disabled={!isNextValid}>
+          Next
+        </Button>
       )}
     </div>
   )

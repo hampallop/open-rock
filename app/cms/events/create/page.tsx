@@ -22,9 +22,9 @@ interface CompeteProgram {
 }
 
 const roundOptions = [
-  { id: 'qualifications', label: 'Qualifications' },
-  { id: 'semi-final', label: 'Semi-Final' },
-  { id: 'final', label: 'Final' },
+  { id: 'qualifications', label: 'Qualifications', order: 1 },
+  { id: 'semi-final', label: 'Semi-Final', order: 2 },
+  { id: 'final', label: 'Final', order: 3 },
 ]
 
 export default function CreateEventForm() {
@@ -37,6 +37,15 @@ export default function CreateEventForm() {
     { name: '', rounds: [] },
   ])
   const router = useRouter()
+  const isValid = {
+    1: eventName.length > 0 && startDate.length > 0 && endDate.length > 0,
+    2: programs.every((program) => program.name.length > 0),
+    3: programs.every((program) => program.rounds.length > 0),
+    4: programs.every((program) =>
+      program.rounds.every((round) => round.routeAmount > 0),
+    ),
+  } as Record<number, boolean>
+  const isNextValid = isValid[step]
 
   const handleNextStep = () => {
     setStep(step + 1)
@@ -57,7 +66,19 @@ export default function CreateEventForm() {
     const program = { ...newPrograms[programIndex] }
     const roundIndex = program.rounds.findIndex((r) => r.name === roundName)
     if (roundIndex === -1) {
-      program.rounds = [...program.rounds, { name: roundName, routeAmount: 1 }]
+      program.rounds = [
+        ...program.rounds,
+        {
+          name: roundName,
+          routeAmount: roundName === 'Qualifications' ? 5 : 4,
+        },
+      ].sort(
+        (a, b) =>
+          (roundOptions.find((roundOption) => a.name === roundOption.label)
+            ?.order || 0) -
+          (roundOptions.find((roundOption) => b.name === roundOption.label)
+            ?.order || 0),
+      )
     } else {
       program.rounds = program.rounds.filter((r) => r.name !== roundName)
     }
@@ -377,7 +398,7 @@ export default function CreateEventForm() {
   return (
     <>
       <main className="max-h-[calc(100vh-143px)] py-8 flex flex-grow w-full overflow-y-auto">
-        <div className="max-w-2xl mx-auto w-full h-full">
+        <div className="max-w-2xl mx-auto w-full h-full px-5">
           <h2 className="text-3xl font-bold mb-6">Create Event</h2>
           {renderStepContent()}
         </div>
@@ -388,6 +409,7 @@ export default function CreateEventForm() {
         onPrevious={handlePrevStep}
         onNext={handleNextStep}
         onSubmit={handleSubmit}
+        isNextValid={isNextValid}
       />
     </>
   )
