@@ -1,20 +1,15 @@
 'use client'
 
-import { useState, useCallback } from 'react'
+import { useState } from 'react'
 import { Input } from '@/components/ui/input'
-import { Button } from '@/components/ui/button'
 import { Label } from '@/components/ui/label'
-import {
-  Sheet,
-  SheetContent,
-  SheetDescription,
-  SheetHeader,
-  SheetTitle,
-  SheetTrigger,
-} from '@/components/ui/sheet'
-import { Plus, Minus, Trash2 } from 'lucide-react'
+import { Checkbox } from '@/components/ui/checkbox'
 import { useRouter } from 'next/navigation'
 import { createClient } from '@/utils/supabase/client'
+import { Plus, Minus } from 'lucide-react'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { StepFooter } from '@/components/cms/step-footer'
+import { Button } from '@/components/ui/button'
 
 interface CompeteRound {
   name: string
@@ -26,425 +21,384 @@ interface CompeteProgram {
   rounds: CompeteRound[]
 }
 
-async function upsertBulks({
-  eventName,
-  eventLocation,
-  eventStartDate,
-  eventEndDate,
-  programs,
-}: {
-  eventName: string
-  eventLocation: string
-  eventStartDate: string
-  eventEndDate: string
-  programs: CompeteProgram[]
-}) {
-  const supabase = createClient()
+const roundOptions = [
+  { id: 'qualifications', label: 'Qualifications' },
+  { id: 'semi-final', label: 'Semi-Final' },
+  { id: 'final', label: 'Final' },
+  { id: 'others', label: 'Others' },
+]
 
-  // Create event
-  const { data: eventData, error: eventError } = await supabase
-    .from('events')
-    .insert({
-      name: eventName,
-      location: eventLocation,
-      startedAt: eventStartDate,
-      endedAt: eventEndDate,
-    })
-    .select()
-    .single()
-
-  if (eventError) throw eventError
-  if (!eventData) throw new Error('Event creation failed')
-
-  const eventId = eventData.id
-
-  // Create programs and rounds
-  for (const program of programs) {
-    // Create program
-    const { data: programData, error: programError } = await supabase
-      .from('competePrograms')
-      .insert({
-        eventId: eventId,
-        name: program.name,
-      })
-      .select()
-      .single()
-
-    if (programError) throw programError
-    if (!programData) throw new Error('Program creation failed')
-
-    const programId = programData.id
-
-    // Create rounds for the program
-    const rounds = program.rounds.map((round) => ({
-      competeProgramId: programId,
-      name: round.name,
-      routeAmount: round.routeAmount,
-    }))
-
-    const { error: roundsError } = await supabase
-      .from('competeRounds')
-      .insert(rounds)
-
-    if (roundsError) throw roundsError
-  }
-
-  return true
-}
-
-export default function CreateEventPage() {
+export default function CreateEventForm() {
+  const [step, setStep] = useState(1)
   const [eventName, setEventName] = useState('')
   const [eventLocation, setEventLocation] = useState('')
   const [startDate, setStartDate] = useState('')
   const [endDate, setEndDate] = useState('')
-  const [programs, setPrograms] = useState<CompeteProgram[]>([])
-  const [isAddProgramOpen, setIsAddProgramOpen] = useState(false)
-  const [isAddRoundOpen, setIsAddRoundOpen] = useState(false)
-  const [newProgramName, setNewProgramName] = useState('')
-  const [newRoundName, setNewRoundName] = useState('')
-  const [newRoundRouteAmount, setNewRoundRouteAmount] = useState(4) // Changed initial value to 10
-  const [currentProgramIndex, setCurrentProgramIndex] = useState(-1)
+  const [programCount, setProgramCount] = useState(1)
+  const [programs, setPrograms] = useState<CompeteProgram[]>([
+    { name: '', rounds: [] },
+  ])
+  console.log('programs', programs)
   const router = useRouter()
 
-  const handleInputBlur = useCallback(() => {
-    if (document.activeElement instanceof HTMLElement) {
-      document.activeElement.blur()
-    }
-  }, [])
-
-  const handleFormSubmit = useCallback(
-    (submitFunction: () => void) => {
-      return (e: React.FormEvent) => {
-        e.preventDefault()
-        handleInputBlur()
-        setTimeout(submitFunction, 100)
-      }
-    },
-    [handleInputBlur],
-  )
-
-  const addProgram = () => {
-    if (newProgramName) {
-      setPrograms([...programs, { name: newProgramName, rounds: [] }])
-      setNewProgramName('')
-      setIsAddProgramOpen(false)
-    }
+  const handleNextStep = () => {
+    // if (step === 2) {
+    //   setPrograms(
+    //     Array(programCount)
+    //       .fill(null)
+    //       .map(() => ({ name: '', rounds: [] })),
+    //   )
+    // }
+    setStep(step + 1)
   }
 
-  const updateProgram = (index: number, name: string) => {
+  const handlePrevStep = () => {
+    setStep(step - 1)
+  }
+
+  const handleProgramNameChange = (index: number, name: string) => {
     const newPrograms = [...programs]
-    newPrograms[index].name = name
+    newPrograms[index] = { ...newPrograms[index], name }
     setPrograms(newPrograms)
   }
 
-  const deleteProgram = (index: number) => {
+  const handleRoundSelection = (programIndex: number, roundName: string) => {
     const newPrograms = [...programs]
-    newPrograms.splice(index, 1)
+    const program = { ...newPrograms[programIndex] }
+    const roundIndex = program.rounds.findIndex((r) => r.name === roundName)
+    if (roundIndex === -1) {
+      program.rounds = [...program.rounds, { name: roundName, routeAmount: 1 }]
+    } else {
+      program.rounds = program.rounds.filter((r) => r.name !== roundName)
+    }
+    newPrograms[programIndex] = program
     setPrograms(newPrograms)
   }
 
-  const addRound = () => {
-    if (newRoundName && currentProgramIndex !== -1) {
-      const newPrograms = [...programs]
-      newPrograms[currentProgramIndex].rounds.push({
-        name: newRoundName,
-        routeAmount: newRoundRouteAmount,
-      })
-      setPrograms(newPrograms)
-      setNewRoundName('')
-      setNewRoundRouteAmount(1)
-      setIsAddRoundOpen(false)
-    }
-  }
-
-  const updateRound = (
+  const handleRouteAmountChange = (
     programIndex: number,
     roundIndex: number,
-    field: keyof CompeteRound,
-    value: string | number,
+    amount: number,
   ) => {
     const newPrograms = [...programs]
-    newPrograms[programIndex].rounds[roundIndex][field] = value as never
+    const program = { ...newPrograms[programIndex] }
+    const round = { ...program.rounds[roundIndex] }
+    round.routeAmount = Math.max(1, amount)
+    program.rounds = [
+      ...program.rounds.slice(0, roundIndex),
+      round,
+      ...program.rounds.slice(roundIndex + 1),
+    ]
+    newPrograms[programIndex] = program
     setPrograms(newPrograms)
   }
 
-  const deleteRound = (programIndex: number, roundIndex: number) => {
-    const newPrograms = [...programs]
-    newPrograms[programIndex].rounds.splice(roundIndex, 1)
-    setPrograms(newPrograms)
-  }
-
-  const adjustRouteAmount = (increment: number) => {
-    setNewRoundRouteAmount(
-      Math.max(1, Math.min(50, newRoundRouteAmount + increment)),
-    )
-  }
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
+  const handleSubmit = async () => {
     try {
-      await upsertBulks({
-        eventName,
-        eventLocation,
-        eventStartDate: startDate,
-        eventEndDate: endDate,
-        programs,
-      })
+      const supabase = createClient()
+      const { data: eventData, error: eventError } = await supabase
+        .from('events')
+        .insert({
+          name: eventName,
+          location: eventLocation,
+          startedAt: startDate,
+          endedAt: endDate,
+        })
+        .select()
+        .single()
 
-      // Reset form and navigate back to events list
-      setEventName('')
-      setEventLocation('')
-      setStartDate('')
-      setEndDate('')
-      setPrograms([])
+      if (eventError) throw eventError
+      if (!eventData) throw new Error('Event creation failed')
+
+      const eventId = eventData.id
+
+      for (const program of programs) {
+        const { data: programData, error: programError } = await supabase
+          .from('competePrograms')
+          .insert({
+            eventId: eventId,
+            name: program.name,
+          })
+          .select()
+          .single()
+
+        if (programError) throw programError
+        if (!programData) throw new Error('Program creation failed')
+
+        const programId = programData.id
+
+        const rounds = program.rounds.map((round) => ({
+          competeProgramId: programId,
+          name: round.name,
+          routeAmount: round.routeAmount,
+        }))
+
+        const { error: roundsError } = await supabase
+          .from('competeRounds')
+          .insert(rounds)
+
+        if (roundsError) throw roundsError
+      }
+
       router.push('/cms/events')
     } catch (error) {
       console.error('Error creating event:', error)
-      // Here you might want to show an error message to the user
     }
   }
 
-  return (
-    <div>
-      <h2 className="text-3xl font-bold mb-6">Create Event</h2>
-      <form onSubmit={handleSubmit} className="space-y-6 max-w-2xl">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div>
-            <Label htmlFor="eventName">Event Name</Label>
-            <Input
-              id="eventName"
-              value={eventName}
-              onChange={(e) => setEventName(e.target.value)}
-              required
-              className="text-base sm:text-sm" // Increased font size for mobile
-            />
-          </div>
-          <div>
-            <Label htmlFor="eventLocation">Location</Label>
-            <Input
-              id="eventLocation"
-              value={eventLocation}
-              onChange={(e) => setEventLocation(e.target.value)}
-              required
-              className="text-base sm:text-sm" // Increased font size for mobile
-            />
-          </div>
-          <div>
-            <Label htmlFor="startDate">Start Date</Label>
-            <Input
-              id="startDate"
-              type="date"
-              value={startDate}
-              onChange={(e) => setStartDate(e.target.value)}
-              required
-              className="text-base sm:text-sm" // Increased font size for mobile
-            />
-          </div>
-          <div>
-            <Label htmlFor="endDate">End Date</Label>
-            <Input
-              id="endDate"
-              type="date"
-              value={endDate}
-              onChange={(e) => setEndDate(e.target.value)}
-              required
-              className="text-base sm:text-sm" // Increased font size for mobile
-            />
-          </div>
-        </div>
+  const totalSteps = 5
 
-        <div>
-          <h3 className="text-lg font-semibold mb-2">Compete Programs</h3>
+  const renderStepContent = () => {
+    switch (step) {
+      case 1:
+        return (
           <div className="space-y-4">
-            {programs.map((program, programIndex) => (
-              <div key={programIndex} className="border p-4 rounded-md">
-                <div className="flex items-center justify-between mb-2">
-                  <h4 className="text-md font-semibold">
-                    {program.name || `Program ${programIndex + 1}`}
-                  </h4>
-                  <Button
-                    type="button"
-                    variant="ghost"
-                    size="sm"
-                    onClick={() => deleteProgram(programIndex)}
-                  >
-                    <Trash2 className="h-4 w-4" />
-                  </Button>
-                </div>
+            <div className="mb-6">
+              <h1 className="text-2xl font-medium leading-none tracking-tight mb-2">
+                Fill your event.
+              </h1>
+            </div>
+            <div>
+              <Label htmlFor="eventName">Event Name</Label>
+              <Input
+                id="eventName"
+                value={eventName}
+                onChange={(e) => setEventName(e.target.value)}
+                required
+              />
+            </div>
+            <div>
+              <Label htmlFor="eventLocation">Location</Label>
+              <Input
+                id="eventLocation"
+                value={eventLocation}
+                onChange={(e) => setEventLocation(e.target.value)}
+                required
+              />
+            </div>
+            <div>
+              <Label htmlFor="startDate">Start Date</Label>
+              <Input
+                id="startDate"
+                type="date"
+                value={startDate}
+                onChange={(e) => setStartDate(e.target.value)}
+                required
+              />
+            </div>
+            <div>
+              <Label htmlFor="endDate">End Date</Label>
+              <Input
+                id="endDate"
+                type="date"
+                value={endDate}
+                onChange={(e) => setEndDate(e.target.value)}
+                required
+              />
+            </div>
+          </div>
+        )
+      case 2:
+        return (
+          <div className="space-y-4">
+            <div className="mb-6">
+              <h1 className="text-2xl font-medium leading-none tracking-tight mb-2">
+                How many programs do you have?
+              </h1>
+              <h2 className="text-lg text-muted-foreground">
+                E.g., Open Male, Open Female, Intermediate Male, Intermediate
+                Female.
+              </h2>
+            </div>
+            <div className="flex items-center space-x-4">
+              <Button
+                className="size-10 p-1 rounded-full"
+                variant={'outline'}
+                onClick={() =>
+                  setPrograms(programs.slice(0, programs.length - 1))
+                }
+              >
+                <Minus className="h-4 w-4" />
+              </Button>
+              <span className="text-2xl font-bold">{programs.length}</span>
+              <Button
+                className="size-10 p-1 rounded-full"
+                variant={'outline'}
+                onClick={() =>
+                  setPrograms([...programs, { name: '', rounds: [] }])
+                }
+              >
+                <Plus className="h-4 w-4" />
+              </Button>
+            </div>
+            {programs.map((program, index) => (
+              <div key={index} className="space-y-2">
+                <Label htmlFor={`program-${index}`}>Program {index + 1}</Label>
                 <Input
+                  id={`program-${index}`}
                   value={program.name}
-                  onChange={(e) => updateProgram(programIndex, e.target.value)}
-                  placeholder="Program Name"
-                  className="mb-2 text-base sm:text-sm"
+                  onChange={(e) =>
+                    handleProgramNameChange(index, e.target.value)
+                  }
+                  required
+                  placeholder="Open Male, Open Female"
                 />
-                <div className="space-y-2">
-                  <h5 className="text-sm font-semibold">Rounds</h5>
-                  {program.rounds.map((round, roundIndex) => (
+              </div>
+            ))}
+          </div>
+        )
+      case 3:
+        return (
+          <div className="space-y-4">
+            <div className="mb-6">
+              <h1 className="text-2xl font-medium leading-none tracking-tight mb-2">
+                How many rounds does this program have?
+              </h1>
+            </div>
+            {programs.map((program, programIndex) => (
+              <div key={programIndex} className="">
+                <h3 className="text-lg font-semibold mb-2">{program.name}</h3>
+                <div className="space-y-2 mb-8">
+                  {roundOptions.map((option) => (
                     <div
-                      key={roundIndex}
+                      key={option.id}
                       className="flex items-center space-x-2"
                     >
-                      <Input
-                        value={round.name}
-                        onChange={(e) =>
-                          updateRound(
-                            programIndex,
-                            roundIndex,
-                            'name',
-                            e.target.value,
-                          )
+                      <Checkbox
+                        id={`${program.name}-${option.id}`}
+                        checked={program.rounds.some(
+                          (r) => r.name === option.label,
+                        )}
+                        onCheckedChange={() =>
+                          handleRoundSelection(programIndex, option.label)
                         }
-                        placeholder="Round Name"
-                        className="flex-grow text-base sm:text-sm"
                       />
-                      <Input
-                        type="number"
-                        value={round.routeAmount}
-                        onChange={(e) =>
-                          updateRound(
-                            programIndex,
-                            roundIndex,
-                            'routeAmount',
-                            parseInt(e.target.value),
-                          )
-                        }
-                        className="w-20 text-base sm:text-sm"
-                      />
-                      <Button
-                        type="button"
-                        variant="ghost"
-                        size="sm"
-                        onClick={() => deleteRound(programIndex, roundIndex)}
-                      >
-                        <Trash2 className="h-4 w-4" />
-                      </Button>
+                      <Label htmlFor={`${program.name}-${option.id}`}>
+                        {option.label}
+                      </Label>
                     </div>
                   ))}
-                  <Button
-                    type="button"
-                    variant="outline"
-                    size="sm"
-                    onClick={() => {
-                      setCurrentProgramIndex(programIndex)
-                      setIsAddRoundOpen(true)
-                    }}
-                  >
-                    <Plus className="mr-2 h-4 w-4" /> Add Round
-                  </Button>
                 </div>
               </div>
             ))}
           </div>
-          <Sheet open={isAddProgramOpen} onOpenChange={setIsAddProgramOpen}>
-            <SheetTrigger asChild>
-              <Button
-                type="button"
-                variant="outline"
-                onClick={() => setIsAddProgramOpen(true)}
-                className="mt-4"
-              >
-                <Plus className="mr-2 h-4 w-4" /> Add Program
-              </Button>
-            </SheetTrigger>
-            <SheetContent>
-              <SheetHeader>
-                <SheetTitle>Add New Program</SheetTitle>
-                <SheetDescription>
-                  Enter the name for the new program.
-                </SheetDescription>
-              </SheetHeader>
-              <form
-                onSubmit={handleFormSubmit(addProgram)}
-                className="space-y-4 mt-4"
-              >
-                <div>
-                  <Label htmlFor="newProgramName">Program Name</Label>
-                  <Input
-                    id="newProgramName"
-                    value={newProgramName}
-                    onChange={(e) => setNewProgramName(e.target.value)}
-                    onBlur={handleInputBlur}
-                    placeholder="Enter program name"
-                    className="text-base sm:text-sm"
-                    autoFocus
-                  />
-                </div>
-                <Button type="submit" className="w-full">
-                  Add Program
-                </Button>
-              </form>
-            </SheetContent>
-          </Sheet>
+        )
+      case 4:
+        return (
+          <div className="space-y-4">
+            <div className="mb-6">
+              <h1 className="text-2xl font-medium leading-none tracking-tight mb-2">
+                How many routes each round have?
+              </h1>
+              <h2 className="text-lg text-muted-foreground">
+                E.g., Open Male, Open Female, Intermediate Male, Intermediate
+                Female.
+              </h2>
+            </div>
+            {programs.map((program, programIndex) => (
+              <Card key={programIndex}>
+                <CardHeader className="border-b">
+                  <CardTitle>{program.name}</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  {program.rounds.map((round, roundIndex) => (
+                    <div
+                      key={roundIndex}
+                      className="flex items-center space-y-4"
+                    >
+                      <Label className="text-lg text-muted-foreground mr-auto">
+                        {round.name}
+                      </Label>
+                      <div className="space-x-4 flex items-center">
+                        <Button
+                          className="size-10 p-1 rounded-full"
+                          variant={'outline'}
+                          onClick={() =>
+                            handleRouteAmountChange(
+                              programIndex,
+                              roundIndex,
+                              round.routeAmount - 1,
+                            )
+                          }
+                        >
+                          <Minus className="h-4 w-4" />
+                        </Button>
+                        <span className="tabular-nums">
+                          {round.routeAmount}
+                        </span>
+                        <Button
+                          className="size-10 p-1 rounded-full"
+                          variant={'outline'}
+                          onClick={() =>
+                            handleRouteAmountChange(
+                              programIndex,
+                              roundIndex,
+                              round.routeAmount + 1,
+                            )
+                          }
+                        >
+                          <Plus className="h-4 w-4" />
+                        </Button>
+                      </div>
+                    </div>
+                  ))}
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        )
+      case 5:
+        return (
+          <div className="space-y-4">
+            <h3 className="text-xl font-semibold">Summary</h3>
+            <div>
+              <p>
+                <strong>Event Name:</strong> {eventName}
+              </p>
+              <p>
+                <strong>Location:</strong> {eventLocation}
+              </p>
+              <p>
+                <strong>Start Date:</strong> {startDate}
+              </p>
+              <p>
+                <strong>End Date:</strong> {endDate}
+              </p>
+            </div>
+            {programs.map((program, index) => (
+              <div key={index}>
+                <h4 className="text-lg font-semibold">{program.name}</h4>
+                <ul>
+                  {program.rounds.map((round, roundIndex) => (
+                    <li key={roundIndex}>
+                      {round.name}: {round.routeAmount} routes
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            ))}
+          </div>
+        )
+      default:
+        return null
+    }
+  }
+
+  return (
+    <>
+      <main className="max-h-[calc(100vh-143px)] py-8 flex flex-grow w-full overflow-y-auto">
+        <div className="max-w-2xl mx-auto w-full h-full">
+          <h2 className="text-3xl font-bold mb-6">Create Event</h2>
+          {renderStepContent()}
         </div>
-
-        <Sheet open={isAddRoundOpen} onOpenChange={setIsAddRoundOpen}>
-          <SheetContent>
-            <SheetHeader>
-              <SheetTitle>Add New Round</SheetTitle>
-              <SheetDescription>
-                Enter the details for the new round.
-              </SheetDescription>
-            </SheetHeader>
-            <form
-              onSubmit={handleFormSubmit(addRound)}
-              className="space-y-4 mt-4"
-            >
-              <div>
-                <Label htmlFor="newRoundName">Round Name</Label>
-                <Input
-                  id="newRoundName"
-                  value={newRoundName}
-                  onChange={(e) => setNewRoundName(e.target.value)}
-                  onBlur={handleInputBlur}
-                  placeholder="Enter round name"
-                  className="text-base sm:text-sm"
-                  autoFocus
-                />
-              </div>
-              <div>
-                <Label htmlFor="newRoundRouteAmount">Number of Routes</Label>
-                <div className="flex items-center justify-center space-x-2 mt-2">
-                  <Button
-                    type="button"
-                    variant="outline"
-                    size="icon"
-                    className="h-8 w-8 shrink-0 rounded-full"
-                    onClick={() => adjustRouteAmount(-1)}
-                    disabled={newRoundRouteAmount <= 1}
-                  >
-                    <Minus className="h-4 w-4" />
-                    <span className="sr-only">Decrease</span>
-                  </Button>
-                  <div className="flex-1 text-center">
-                    <div className="text-5xl sm:text-7xl font-bold tracking-tighter">
-                      {newRoundRouteAmount}
-                    </div>
-                    <div className="text-[0.70rem] uppercase text-muted-foreground">
-                      Routes/round
-                    </div>
-                  </div>
-                  <Button
-                    type="button"
-                    variant="outline"
-                    size="icon"
-                    className="h-8 w-8 shrink-0 rounded-full"
-                    onClick={() => adjustRouteAmount(1)}
-                    disabled={newRoundRouteAmount >= 50}
-                  >
-                    <Plus className="h-4 w-4" />
-                    <span className="sr-only">Increase</span>
-                  </Button>
-                </div>
-              </div>
-              <Button type="submit" className="w-full">
-                Add Round
-              </Button>
-            </form>
-          </SheetContent>
-        </Sheet>
-
-        <Button type="submit">Create Event</Button>
-      </form>
-    </div>
+      </main>
+      <StepFooter
+        currentStep={step}
+        totalSteps={totalSteps}
+        onPrevious={handlePrevStep}
+        onNext={handleNextStep}
+        onSubmit={handleSubmit}
+      />
+    </>
   )
 }

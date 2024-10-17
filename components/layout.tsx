@@ -15,7 +15,7 @@ export function Layout({
   stickyHeader,
 }: LayoutProps) {
   return (
-    <section className="min-h-screen max-w-screen-md mx-auto w-full bg-background">
+    <section className="max-w-screen-md mx-auto w-full bg-background">
       <header className="sticky top-0 z-20 px-4 border-b border-border/40 bg-background">
         <div className="py-4 flex items-center">
           {backLink && (
