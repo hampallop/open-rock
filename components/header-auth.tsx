@@ -49,7 +49,7 @@ export default async function AuthButton() {
   return user ? (
     <div className="flex items-center gap-4">
       <Button asChild size="sm" variant={'outline'}>
-        <Link href="/cms/events/create">Create Event</Link>
+        <Link href="/cms/events">Manage events</Link>
       </Button>
       <form action={signOutAction}>
         <Button type="submit" variant={'outline'} size="sm">
