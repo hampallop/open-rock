@@ -47,7 +47,7 @@ export default async function EventViewPage({
   const backLink = `/cms/events`
 
   return (
-    <div className="flex flex-col px-5">
+    <div className="max-w-screen-md mx-auto w-full bg-background flex flex-col px-5">
       <section className="flex mx-auto w-full bg-background mb-8 mt-4 justify-between items-center">
         <Link href={backLink} className="mr-4">
           <ChevronLeftIcon className="h-6 w-6" />
