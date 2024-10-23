@@ -9,5 +9,11 @@ export default async function Home() {
     return <div>No events found</div>
   }
 
-  return <EventList title="Climbing Events" events={events} />
+  return (
+    <>
+      <main className="max-h-[calc(100vh-64px)] flex flex-grow w-full overflow-y-auto">
+        <EventList title="Climbing Events" events={events} />
+      </main>
+    </>
+  )
 }

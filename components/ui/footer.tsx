@@ -7,7 +7,7 @@ import { usePathname } from 'next/navigation'
 export function Footer() {
   const pathname = usePathname()
   return (
-    <footer className="h-20 w-full border-t flex items-center bg-card px-5 justify-between">
+    <footer className="sticky bottom-0 h-20 w-full border-t flex items-center bg-card px-5 justify-between">
       <section className="flex max-w-screen-md mx-auto w-full bg-background">
         <Link
           href="/cms/events"

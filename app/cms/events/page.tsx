@@ -12,7 +12,7 @@ export default async function Home() {
 
   return (
     <>
-      <main className="max-h-[calc(100vh-143px)] py-8 flex flex-grow w-full overflow-y-auto">
+      <main className="max-h-[calc(100vh-143px)] flex flex-grow w-full overflow-y-auto">
         <EventList title="Manage events" events={events} isCms />
       </main>
       <Footer />
