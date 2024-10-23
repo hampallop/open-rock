@@ -1,5 +1,4 @@
 'use client'
-import { PlusIcon } from 'lucide-react'
 import Link from 'next/link'
 import { format, isPast } from 'date-fns'
 import { Tables } from '@/database.types'
@@ -50,10 +49,10 @@ export function EventList({
   const activeEvents = tab === 'upcoming' ? upcomingEvents : previousEvents
 
   return (
-    <div className="grid grid-rows-[auto_1fr] px-5 w-full mx-auto max-w-screen-md">
-      <div className="flex flex-col bg-background">
-        <h1 className="text-3xl font-medium mb-4 mt-4">{title}</h1>
-        <div className="flex gap-2 mb-4">
+    <>
+      <div className="flex flex-col bg-background px-5">
+        <h1 className="text-3xl font-medium mb-4 mb-4">{title}</h1>
+        <div className="flex gap-2 mb-2">
           <Button
             className="rounded-full"
             variant={tab === 'upcoming' ? 'default' : 'secondary'}
@@ -69,31 +68,16 @@ export function EventList({
             Previous
           </Button>
         </div>
-        {isCms && (
-          <section className="flex max-w-screen-md mx-auto w-full bg-background px-4">
-            <div className="ml-auto">
-              <Button
-                asChild
-                className="rounded-full p-2"
-                variant={'secondary'}
-              >
-                <Link href="/cms/events/create">
-                  <PlusIcon />
-                </Link>
-              </Button>
-            </div>
-          </section>
-        )}
       </div>
-      <div className="overflow-y-auto -mx-5 px-5">
+      <div className="overflow-y-auto px-5 py-2 flex-grow">
         {activeEvents.length > 0 ? (
           activeEvents.map((event) => (
             <EventCard event={event} key={event.id} isCms={isCms} />
           ))
         ) : (
-          <p className="mt-8">No events found</p>
+          <p className="mt-8 mb-auto h-full">No events found</p>
         )}
       </div>
-    </div>
+    </>
   )
 }

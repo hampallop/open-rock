@@ -1,4 +1,7 @@
 import { EventList } from '@/components/event-list'
+import { ThemeSwitcher } from '@/components/theme-switcher'
+import { Button } from '@/components/ui/button'
+import { Footer } from '@/components/ui/footer'
 import { createClient } from '@/utils/supabase/server'
 
 export default async function Home() {
@@ -10,10 +13,14 @@ export default async function Home() {
   }
 
   return (
-    <>
-      <main className="max-h-[calc(100vh-64px)] flex flex-grow w-full overflow-y-auto">
-        <EventList title="Climbing Events" events={events} />
-      </main>
-    </>
+    <main className="flex flex-col min-h-screen max-h-screen max-w-screen-md mx-auto">
+      <div className="ml-auto px-5 py-3">
+        <Button asChild className="rounded-full p-2" variant={'secondary'}>
+          <ThemeSwitcher />
+        </Button>
+      </div>
+      <EventList title="Events" events={events} />
+      <Footer />
+    </main>
   )
 }

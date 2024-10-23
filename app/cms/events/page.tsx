@@ -1,6 +1,9 @@
 import { EventList } from '@/components/event-list'
+import { Button } from '@/components/ui/button'
 import { Footer } from '@/components/ui/footer'
 import { createClient } from '@/utils/supabase/server'
+import { PlusIcon } from 'lucide-react'
+import Link from 'next/link'
 
 export default async function Home() {
   const supabase = createClient()
@@ -11,11 +14,16 @@ export default async function Home() {
   }
 
   return (
-    <>
-      <main className="max-h-[calc(100vh-143px)] flex flex-grow w-full overflow-y-auto">
-        <EventList title="Manage events" events={events} isCms />
-      </main>
+    <main className="flex flex-col min-h-screen max-h-screen max-w-screen-md mx-auto">
+      <div className="ml-auto px-5 py-3">
+        <Button asChild className="rounded-full p-2" variant={'secondary'}>
+          <Link href="/cms/events/create">
+            <PlusIcon />
+          </Link>
+        </Button>
+      </div>
+      <EventList title="Manage events" events={events} isCms />
       <Footer />
-    </>
+    </main>
   )
 }
