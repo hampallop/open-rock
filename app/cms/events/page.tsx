@@ -1,6 +1,6 @@
 import { EventList } from '@/components/event-list'
+import { FooterAuth } from '@/components/footer-auth'
 import { Button } from '@/components/ui/button'
-import { Footer } from '@/components/ui/footer'
 import { createClient } from '@/utils/supabase/server'
 import { PlusIcon } from 'lucide-react'
 import Link from 'next/link'
@@ -23,7 +23,7 @@ export default async function Home() {
         </Button>
       </div>
       <EventList title="Manage events" events={events} isCms />
-      <Footer />
+      <FooterAuth />
     </main>
   )
 }
