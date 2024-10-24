@@ -1,13 +1,12 @@
 'use client'
 import { EventWithCompetePrograms } from '@/app/cms/events/[eventId]/edit/page'
-import { Button } from '@/components/ui/button'
 import { RadioGroup } from '@/components/ui/radio-group'
 import supabase from '@/utils/supabase'
-import { PencilIcon } from 'lucide-react'
 import { useState } from 'react'
 import { RadioGroupItemEnhanced } from '@/components/radio-group-item-enhanced'
 import { RouteEditDialog } from '@/components/route-edit-dialog'
 import { CheckboxEnhanced } from '@/components/checkbox-enhance'
+import { ProgramNameEditDialog } from '@/components/program-name-edit-dialog'
 
 const disciplines = [
   { label: 'Boulder', value: 'boulder' },
@@ -114,7 +113,6 @@ export function ProgramSection({
 
     return
   }
-  console.log('optimisticCompetePrograms', optimisticCompetePrograms)
 
   const [isRouteEditDialogOpen, setIsRouteEditDialogOpen] = useState(false)
   const [routeEditDialogProperties, setRouteEditDialogProperties] = useState({
@@ -122,6 +120,10 @@ export function ProgramSection({
     title: '',
     routeAmount: 0,
   })
+  const [isProgramNameEditDialogOpen, setIsProgramNameEditDialogOpen] =
+    useState(false)
+  const [programNameEditProperties, setProgramNameEditDialogProperties] =
+    useState({ programId: '', programName: '' })
 
   return (
     <>
@@ -131,11 +133,19 @@ export function ProgramSection({
         <div key={program.id} className="mb-8">
           <div className="flex justify-between items-center mb-4">
             <h3 className="text-lg font-medium">{program.name}</h3>
-            <Button className="rounded-full p-4 h-fit" variant={'secondary'}>
-              <PencilIcon size={16} />
-            </Button>
+            <button
+              className="underline leading-6 mb-auto text-sm font-medium"
+              onClick={() => {
+                setProgramNameEditDialogProperties({
+                  programId: program.id,
+                  programName: program.name,
+                })
+                setIsProgramNameEditDialogOpen(true)
+              }}
+            >
+              Edit
+            </button>
           </div>
-
           <p className="mt-4 mb-1 text-muted-foreground">Discipline</p>
           <RadioGroup
             className="grid grid-rows-3 gap-2"
@@ -158,7 +168,6 @@ export function ProgramSection({
               </RadioGroupItemEnhanced>
             ))}
           </RadioGroup>
-
           <p className="mt-4 mb-1 text-muted-foreground">Rule</p>
           <RadioGroup
             className="grid grid-cols-2 gap-2"
@@ -181,7 +190,6 @@ export function ProgramSection({
               </RadioGroupItemEnhanced>
             ))}
           </RadioGroup>
-
           <p className="mt-4 mb-1 text-muted-foreground">Rounds</p>
           <div className="flex flex-col space-y-4">
             {program.competeRounds?.map((round) => (
@@ -234,6 +242,26 @@ export function ProgramSection({
                     return round
                   }),
                 })),
+              )
+            }}
+          />
+
+          <ProgramNameEditDialog
+            open={isProgramNameEditDialogOpen}
+            onOpenChange={setIsProgramNameEditDialogOpen}
+            programId={programNameEditProperties.programId}
+            programName={programNameEditProperties.programName}
+            onSave={(programName) => {
+              setOptimisticCompetePrograms(
+                optimisticCompetePrograms.map((program) => {
+                  if (program.id === programNameEditProperties.programId) {
+                    return {
+                      ...program,
+                      name: programName,
+                    }
+                  }
+                  return program
+                }),
               )
             }}
           />

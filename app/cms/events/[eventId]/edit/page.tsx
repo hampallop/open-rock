@@ -38,7 +38,6 @@ export default async function EventEditPage({
 }) {
   const { eventId } = await params
 
-  const backLink = `/cms/events/${eventId}`
   const { data: event, error: _error } =
     await queryEventWithCompetePrograms(eventId)
   if (!event) {
@@ -48,12 +47,6 @@ export default async function EventEditPage({
   return (
     <main className="flex flex-col min-h-screen max-w-screen-md mx-auto">
       <Navbar eventId={eventId} />
-      {/* <section className="flex mx-auto w-full bg-background mb-8 mt-4 items-center">
-        <Link href={backLink} className="justify-items-start mr-4">
-          <ChevronLeftIcon className="h-6 w-6" />
-          <span className="sr-only">Back</span>
-        </Link>
-      </section> */}
       <section className="px-5">
         <InfoSection event={event} />
         <ProgramSection competePrograms={event?.competePrograms ?? []} />

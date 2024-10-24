@@ -9,56 +9,54 @@ import { Input } from '@/components/ui/input'
 
 import { createClient } from '@/utils/supabase/client'
 
-const updateRouteAmountAction =
-  ({ roundId, inputName }: { roundId: string; inputName: string }) =>
+const updateprogramNameAction =
+  ({ programId, inputName }: { programId: string; inputName: string }) =>
   async (formData: FormData) => {
-    const routeAmount = Number(formData.get(inputName)?.toString())
+    const programName = formData.get(inputName)?.toString()
 
     const supabase = await createClient()
 
     await supabase
-      .from('competeRounds')
-      .update({ routeAmount })
-      .eq('id', roundId)
+      .from('competePrograms')
+      .update({ name: programName })
+      .eq('id', programId)
 
-    return routeAmount
+    return programName
   }
 
-export function RouteEditDialog({
+export function ProgramNameEditDialog({
   open,
   onOpenChange,
-  title,
-  routeAmount,
-  roundId,
+  programId,
+  programName,
   onSave = () => {},
 }: {
   open: boolean
   onOpenChange: (open: boolean) => void
-  title: string
-  routeAmount: number
-  roundId: string
-  onSave?: (routeAmount: number) => void
+  programId: string
+  programName: string
+  onSave?: (programName: string) => void
 }) {
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>{title}</DialogTitle>
+          <DialogTitle>Edit program name</DialogTitle>
         </DialogHeader>
         <form>
           <div>
-            <Input name="routeAmount" defaultValue={routeAmount} type="tel" />
+            <Input name="programName" defaultValue={programName} />
           </div>
           <div className="flex mt-4">
             <SubmitButton
               formAction={async (formData) => {
-                const routeAmount = await updateRouteAmountAction({
-                  roundId,
-                  inputName: 'routeAmount',
+                const programName = await updateprogramNameAction({
+                  programId,
+                  inputName: 'programName',
                 })(formData)
 
-                if (routeAmount) {
-                  onSave?.(routeAmount)
+                if (programName) {
+                  onSave?.(programName)
                 }
                 onOpenChange(false)
               }}
