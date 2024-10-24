@@ -8,6 +8,14 @@ import supabase from '@/utils/supabase'
 import { PencilIcon } from 'lucide-react'
 import { useState } from 'react'
 import { Checkbox } from '@/components/ui/checkbox'
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog'
+import { Input } from '@/components/ui/input'
+import { SubmitButton } from '@/components/submit-button'
 
 const disciplines = [
   { label: 'Boulder', value: 'boulder' },
@@ -26,6 +34,19 @@ const rules = {
 const roundOrder = ['Qualifications', 'Semi-Final', 'Final']
 const getRoundIndex = (roundName: string) =>
   roundOrder.findIndex((x) => x === roundName)
+
+const updateRouteAmountAction =
+  ({ roundId, inputName }: { roundId: string; inputName: string }) =>
+  async (formData: FormData) => {
+    const routeAmount = Number(formData.get(inputName)?.toString())
+
+    await supabase
+      .from('competeRounds')
+      .update({ routeAmount })
+      .eq('id', roundId)
+
+    return routeAmount
+  }
 
 export function ProgramSection({
   competePrograms,
@@ -116,6 +137,13 @@ export function ProgramSection({
   }
   console.log('optimisticCompetePrograms', optimisticCompetePrograms)
 
+  const [isRouteEditDialogOpen, setIsRouteEditDialogOpen] = useState(false)
+  const [routeEditDialogProperties, setRouteEditDialogProperties] = useState({
+    roundId: '',
+    title: '',
+    routeAmount: 0,
+  })
+
   return (
     <>
       <h2 className="text-2xl font-medium mb-2">Programs</h2>
@@ -195,7 +223,7 @@ export function ProgramSection({
                 key={round.id}
                 htmlFor={`${program.id}-${round.name}`}
                 className={cn(
-                  'hover:bg-primary/10 transition-colors cursor-pointer flex items-center border p-6 space-x-2 rounded-2xl',
+                  'hover:bg-primary/10 transition-colors cursor-pointer flex items-center border p-6 rounded-2xl',
                   round.status === 'ACTIVE' &&
                     'ring ring-primary ring-2 bg-secondary',
                 )}
@@ -211,12 +239,98 @@ export function ProgramSection({
                     })
                   }}
                 />
-                <span>{round.name}</span>
+                <span className="ml-2">{round.name}</span>
+
+                <span
+                  className="ml-auto underline -m-2 p-2 hover:bg-primary/5 transition-colors rounded-lg text-muted-foreground text-xs"
+                  onClick={(e) => {
+                    e.preventDefault()
+                    setRouteEditDialogProperties({
+                      roundId: round.id,
+                      title: `How many route, ${round.name} round have?`,
+                      routeAmount: round.routeAmount ?? 0,
+                    })
+                    setIsRouteEditDialogOpen(true)
+                  }}
+                >
+                  {round.routeAmount} routes
+                </span>
               </Label>
             ))}
           </div>
+
+          <RouteEditDialog
+            open={isRouteEditDialogOpen}
+            onOpenChange={setIsRouteEditDialogOpen}
+            title={routeEditDialogProperties.title}
+            routeAmount={routeEditDialogProperties.routeAmount}
+            roundId={routeEditDialogProperties.roundId}
+            onSave={(routeAmount) => {
+              setOptimisticCompetePrograms(
+                optimisticCompetePrograms.map((program) => ({
+                  ...program,
+                  competeRounds: program.competeRounds.map((round) => {
+                    if (round.id === routeEditDialogProperties.roundId) {
+                      return { ...round, routeAmount }
+                    }
+                    return round
+                  }),
+                })),
+              )
+            }}
+          />
         </div>
       ))}
     </>
+  )
+}
+
+function RouteEditDialog({
+  open,
+  onOpenChange,
+  title,
+  routeAmount,
+  roundId,
+  onSave = () => {},
+}: {
+  open: boolean
+  onOpenChange: (open: boolean) => void
+  title: string
+  routeAmount: number
+  roundId: string
+  onSave?: (routeAmount: number) => void
+}) {
+  return (
+    <Dialog open={open} onOpenChange={onOpenChange}>
+      <DialogContent>
+        <DialogHeader>
+          <DialogTitle>{title}</DialogTitle>
+        </DialogHeader>
+        <form>
+          <div>
+            <Input name="routeAmount" defaultValue={routeAmount} type="tel" />
+          </div>
+          <div className="flex mt-4">
+            <SubmitButton
+              formAction={async (formData) => {
+                const routeAmount = await updateRouteAmountAction({
+                  roundId,
+                  inputName: 'routeAmount',
+                })(formData)
+
+                if (routeAmount) {
+                  onSave?.(routeAmount)
+                }
+                onOpenChange(false)
+              }}
+              pendingText="Saving..."
+              className="ml-auto"
+            >
+              Save and continue
+            </SubmitButton>
+          </div>
+        </form>
+      </DialogContent>
+    </Dialog>
   )
 }
