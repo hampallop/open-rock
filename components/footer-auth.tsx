@@ -1,5 +1,5 @@
 import { signOutAction } from '@/app/actions'
-import { FooterNav } from '@/components/footer-nav'
+import { FooterNavItem } from '@/components/footer-nav-item'
 import { createClient } from '@/utils/supabase/server'
 
 import { GlobeIcon, LogOutIcon, SquarePlusIcon } from 'lucide-react'
@@ -13,14 +13,14 @@ export async function FooterAuth() {
   return (
     <footer className="h-20 w-full border-t flex items-center bg-card px-5 py-2 justify-between">
       <section className="flex max-w-screen-md mx-auto w-full bg-background space-x-2">
-        <FooterNav link="/">
+        <FooterNavItem link="/">
           <GlobeIcon className="mb-1" />
           <span className="text-xs">Home</span>
-        </FooterNav>
-        <FooterNav link="/cms/events">
+        </FooterNavItem>
+        <FooterNavItem link="/cms/events">
           <SquarePlusIcon className="mb-1" />
           <span className="text-xs">Manage events</span>
-        </FooterNav>
+        </FooterNavItem>
         {user ? (
           <form action={signOutAction}>
             <button
@@ -34,10 +34,10 @@ export async function FooterAuth() {
             </button>
           </form>
         ) : (
-          <FooterNav link="/sign-in">
+          <FooterNavItem link="/sign-in">
             <GlobeIcon className="mb-1" />
             <span className="text-xs">Sign in</span>
-          </FooterNav>
+          </FooterNavItem>
         )}
       </section>
     </footer>

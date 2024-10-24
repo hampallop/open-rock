@@ -3,7 +3,7 @@ import { cn } from '@/lib/utils'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 
-export function FooterNav({
+export function FooterNavItem({
   link,
   children,
 }: {
