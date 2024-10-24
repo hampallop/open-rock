@@ -122,6 +122,7 @@ export type Database = {
           name: string
           routeAmount: number | null
           startedAt: string | null
+          status: Database['public']['Enums']['roundStatus']
           type: string | null
           updatedAt: string
           videoUrl: string | null
@@ -134,6 +135,7 @@ export type Database = {
           name: string
           routeAmount?: number | null
           startedAt?: string | null
+          status?: Database['public']['Enums']['roundStatus']
           type?: string | null
           updatedAt?: string
           videoUrl?: string | null
@@ -146,6 +148,7 @@ export type Database = {
           name?: string
           routeAmount?: number | null
           startedAt?: string | null
+          status?: Database['public']['Enums']['roundStatus']
           type?: string | null
           updatedAt?: string
           videoUrl?: string | null
@@ -208,6 +211,7 @@ export type Database = {
     }
     Enums: {
       discipline: 'boulder' | 'lead' | 'speed'
+      roundStatus: 'ACTIVE' | 'INACTIVE'
       rule:
         | 'boulder-top-zone'
         | 'boulder-point'

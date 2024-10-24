@@ -1,6 +1,6 @@
 import { ChevronLeftIcon } from 'lucide-react'
 import Link from 'next/link'
-import { createClient } from '@/utils/supabase/client'
+import { createClient } from '@/utils/supabase/server'
 import { QueryData } from '@supabase/supabase-js'
 import { ProgramSection } from '@/app/cms/events/[eventId]/edit/program'
 import { InfoSection } from '@/app/cms/events/[eventId]/edit/info'
@@ -26,6 +26,10 @@ export default async function EventEditPage({
   const { data: event, error: _error } = await queryEventWithCompetePrograms(
     params.eventId,
   )
+  if (!event) {
+    return <div>Event not found</div>
+  }
+  console.log('event', JSON.stringify(event, null, 2))
   return (
     <div className="max-w-screen-md mx-auto w-full bg-background flex flex-col px-5">
       <section className="flex mx-auto w-full bg-background mb-8 mt-4 items-center">

@@ -1,12 +1,13 @@
 'use client'
+import { EventWithCompetePrograms } from '@/app/cms/events/[eventId]/edit/page'
 import { Button } from '@/components/ui/button'
 import { Label } from '@/components/ui/label'
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
-import { Tables } from '@/database.types'
 import { cn } from '@/lib/utils'
 import supabase from '@/utils/supabase'
 import { PencilIcon } from 'lucide-react'
 import { useState } from 'react'
+import { Checkbox } from '@/components/ui/checkbox'
 
 const disciplines = [
   { label: 'Boulder', value: 'boulder' },
@@ -25,12 +26,48 @@ const rules = {
 export function ProgramSection({
   competePrograms,
 }: {
-  competePrograms: Tables<'competePrograms'>[]
+  competePrograms: EventWithCompetePrograms['competePrograms']
 }) {
   const [optimisticCompetePrograms, setOptimisticCompetePrograms] = useState(
     competePrograms.sort((a, b) => a.name.localeCompare(b.name)),
   )
 
+  const handleRoundChange = async ({
+    programId,
+    round,
+    checked,
+  }: {
+    programId: string
+    round: string
+    checked: boolean
+  }) => {
+    const { data: updatedRound } = await supabase
+      .from('competeRounds')
+      .update({ status: checked ? 'ACTIVE' : 'INACTIVE' })
+      .eq('competeProgramId', programId)
+      .eq('name', round)
+      .select()
+      .single()
+
+    if (updatedRound) {
+      setOptimisticCompetePrograms(
+        optimisticCompetePrograms.map((program) => {
+          if (program?.id === programId) {
+            return {
+              ...program,
+              competeRounds: program.competeRounds.map((round) => {
+                if (round.id === updatedRound.id) {
+                  return updatedRound
+                }
+                return round
+              }),
+            }
+          }
+          return program
+        }),
+      )
+    }
+  }
   const handleCompeteProgramChange = async (params: {
     programId: string
     discipline?: string
@@ -53,16 +90,22 @@ export function ProgramSection({
       .select()
 
     if (updatedPrograms) {
-      const newPrograms = optimisticCompetePrograms
-        .filter((program) => program.id !== params.programId)
-        .concat(updatedPrograms)
-        .sort((a, b) => a.name.localeCompare(b.name))
+      const newPrograms = optimisticCompetePrograms.map((program) => {
+        if (program.id === params.programId) {
+          return {
+            ...program,
+            ...changeData,
+          } as EventWithCompetePrograms['competePrograms'][number]
+        }
+        return program
+      })
 
       setOptimisticCompetePrograms(newPrograms)
     }
 
     return
   }
+  console.log('optimisticCompetePrograms', optimisticCompetePrograms)
 
   return (
     <>
@@ -80,7 +123,7 @@ export function ProgramSection({
           <RadioGroup
             className="grid grid-cols-3 gap-2"
             value={program.discipline}
-            onValueChange={(value) => {
+            onValueChange={(value: string) => {
               handleCompeteProgramChange({
                 programId: program.id,
                 discipline: value,
@@ -110,7 +153,7 @@ export function ProgramSection({
           <RadioGroup
             className="grid grid-cols-2 gap-2"
             value={program.rule}
-            onValueChange={(value) => {
+            onValueChange={(value: string) => {
               handleCompeteProgramChange({
                 programId: program.id,
                 rule: value,
@@ -135,6 +178,32 @@ export function ProgramSection({
               </Label>
             ))}
           </RadioGroup>
+
+          <p className="mt-4 mb-1 text-muted-foreground">Rounds</p>
+          {program.competeRounds?.map((round) => (
+            <Label
+              key={round.id}
+              htmlFor={`${program.id}-${round.name}`}
+              className={cn(
+                'hover:bg-secondary cursor-pointer flex items-center border p-6 space-x-2 rounded-2xl',
+                round.status === 'ACTIVE' &&
+                  'ring ring-primary ring-2 bg-secondary',
+              )}
+            >
+              <Checkbox
+                id={`${program.id}-${round.name}`}
+                checked={round.status === 'ACTIVE'}
+                onCheckedChange={(checked: boolean) => {
+                  handleRoundChange({
+                    programId: program.id,
+                    round: round.name,
+                    checked,
+                  })
+                }}
+              />
+              <span>{round.name}</span>
+            </Label>
+          ))}
         </div>
       ))}
     </>

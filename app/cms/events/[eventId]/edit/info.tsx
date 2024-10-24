@@ -1,11 +1,9 @@
 'use client'
 import { SubmitButton } from '@/components/submit-button'
-import { Button } from '@/components/ui/button'
 
 import {
   Dialog,
   DialogContent,
-  DialogFooter,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
@@ -15,9 +13,9 @@ import { Tables } from '@/database.types'
 import supabase from '@/utils/supabase'
 import { format } from 'date-fns'
 import { useState } from 'react'
+import { EventWithCompetePrograms } from '@/app/cms/events/[eventId]/edit/page'
 
-export function InfoSection({ event }: { event: Tables<'events'> }) {
-  const [isDialogOpen, setIsDialogOpen] = useState(false)
+export function InfoSection({ event }: { event: EventWithCompetePrograms }) {
   const [dialogType, setDialogType] = useState<keyof Tables<'events'> | null>(
     null,
   )
@@ -55,7 +53,7 @@ export function InfoSection({ event }: { event: Tables<'events'> }) {
           </div>
           <Dialog
             open={dialogType === 'name'}
-            onOpenChange={(checked) =>
+            onOpenChange={(checked: boolean) =>
               checked ? setDialogType('name') : setDialogType(null)
             }
           >
@@ -98,7 +96,7 @@ export function InfoSection({ event }: { event: Tables<'events'> }) {
           </div>
           <Dialog
             open={dialogType === 'location'}
-            onOpenChange={(checked) =>
+            onOpenChange={(checked: boolean) =>
               checked ? setDialogType('location') : setDialogType(null)
             }
           >
@@ -141,7 +139,7 @@ export function InfoSection({ event }: { event: Tables<'events'> }) {
           </div>
           <Dialog
             open={dialogType === 'startedAt'}
-            onOpenChange={(checked) =>
+            onOpenChange={(checked: boolean) =>
               checked ? setDialogType('startedAt') : setDialogType(null)
             }
           >
@@ -188,7 +186,7 @@ export function InfoSection({ event }: { event: Tables<'events'> }) {
           </div>
           <Dialog
             open={dialogType === 'endedAt'}
-            onOpenChange={(checked) =>
+            onOpenChange={(checked: boolean) =>
               checked ? setDialogType('endedAt') : setDialogType(null)
             }
           >
