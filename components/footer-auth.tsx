@@ -5,9 +5,10 @@ import { createClient } from '@/utils/supabase/server'
 import { GlobeIcon, LogOutIcon, SquarePlusIcon } from 'lucide-react'
 
 export async function FooterAuth() {
+  const supabase = await createClient()
   const {
     data: { user },
-  } = await createClient().auth.getUser()
+  } = await supabase.auth.getUser()
 
   return (
     <footer className="h-20 w-full border-t flex items-center bg-card px-5 py-2 justify-between">

@@ -6,8 +6,8 @@ import { ChevronLeftIcon, PencilIcon } from 'lucide-react'
 import Link from 'next/link'
 import { Separator } from '@/components/ui/separator'
 
-function queryEventWithCompetePrograms(eventId: string) {
-  const supabase = createClient()
+async function queryEventWithCompetePrograms(eventId: string) {
+  const supabase = await createClient()
   return supabase
     .from('events')
     .select('*, competePrograms(*, competeRounds(*))')
@@ -34,9 +34,11 @@ export default async function EventViewPage({
 }: {
   params: { eventId: string }
 }) {
-  const { data: event, error: _error } = await queryEventWithCompetePrograms(
-    params.eventId,
-  )
+  // asynchronous access of `params.id`.
+  const { eventId } = await params
+
+  const { data: event, error: _error } =
+    await queryEventWithCompetePrograms(eventId)
 
   if (!event) {
     return <div>Event not found</div>

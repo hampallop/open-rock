@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button'
 import { createClient } from '@/utils/supabase/server'
 
 export default async function Home() {
-  const supabase = createClient()
+  const supabase = await createClient()
   const { data: events } = await supabase.from('events').select()
 
   if (!events) {

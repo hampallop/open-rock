@@ -5,13 +5,15 @@ import { QueryData } from '@supabase/supabase-js'
 import { ProgramSection } from '@/app/cms/events/[eventId]/edit/program'
 import { InfoSection } from '@/app/cms/events/[eventId]/edit/info'
 
-function queryEventWithCompetePrograms(eventId: string) {
-  const supabase = createClient()
-  return supabase
+async function queryEventWithCompetePrograms(eventId: string) {
+  const supabase = await createClient()
+  const response = await supabase
     .from('events')
     .select('*, competePrograms(*, competeRounds(*))')
     .eq('id', eventId)
+    .order('name', { referencedTable: 'competePrograms' })
     .single()
+  return response
 }
 export type EventWithCompetePrograms = QueryData<
   ReturnType<typeof queryEventWithCompetePrograms>
@@ -22,10 +24,11 @@ export default async function EventEditPage({
 }: {
   params: { eventId: string }
 }) {
-  const backLink = `/cms/events/${params.eventId}`
-  const { data: event, error: _error } = await queryEventWithCompetePrograms(
-    params.eventId,
-  )
+  const { eventId } = await params
+
+  const backLink = `/cms/events/${eventId}`
+  const { data: event, error: _error } =
+    await queryEventWithCompetePrograms(eventId)
   if (!event) {
     return <div>Event not found</div>
   }
