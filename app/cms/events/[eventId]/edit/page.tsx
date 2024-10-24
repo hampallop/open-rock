@@ -20,6 +20,17 @@ export type EventWithCompetePrograms = QueryData<
   ReturnType<typeof queryEventWithCompetePrograms>
 >
 
+function Navbar({ eventId }: { eventId: string }) {
+  return (
+    <nav className="flex justify-between items-center px-5 py-3 min-h-16">
+      <Link href={`/cms/events/${eventId}`} className="flex items-center">
+        <ChevronLeftIcon />
+        <span className="ml-1">Back</span>
+      </Link>
+    </nav>
+  )
+}
+
 export default async function EventEditPage({
   params,
 }: {
@@ -35,17 +46,18 @@ export default async function EventEditPage({
   }
   console.log('event', JSON.stringify(event, null, 2))
   return (
-    <div className="max-w-screen-md mx-auto w-full bg-background flex flex-col px-5">
-      <section className="flex mx-auto w-full bg-background mb-8 mt-4 items-center">
+    <main className="flex flex-col min-h-screen max-w-screen-md mx-auto">
+      <Navbar eventId={eventId} />
+      {/* <section className="flex mx-auto w-full bg-background mb-8 mt-4 items-center">
         <Link href={backLink} className="justify-items-start mr-4">
           <ChevronLeftIcon className="h-6 w-6" />
           <span className="sr-only">Back</span>
         </Link>
-      </section>
-      <section>
+      </section> */}
+      <section className="px-5">
         <InfoSection event={event} />
         <ProgramSection competePrograms={event?.competePrograms ?? []} />
       </section>
-    </div>
+    </main>
   )
 }

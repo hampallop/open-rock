@@ -2,7 +2,7 @@ import { createClient } from '@/utils/supabase/server'
 import { format } from 'date-fns'
 import { QueryData } from '@supabase/supabase-js'
 import { Button } from '@/components/ui/button'
-import { ChevronLeftIcon, PencilIcon } from 'lucide-react'
+import { ChevronLeftIcon, PencilIcon, PlusIcon } from 'lucide-react'
 import Link from 'next/link'
 import { Separator } from '@/components/ui/separator'
 
@@ -29,6 +29,22 @@ type CompeteRound = {
 const sortRounds = (a: CompeteRound, b: CompeteRound) =>
   sortRoundsMap[a.name] - sortRoundsMap[b.name]
 
+function Navbar({ eventId }: { eventId: string }) {
+  return (
+    <nav className="flex justify-between items-center px-5 py-3 min-h-16">
+      <Link href={'/cms/events'} className="flex items-center">
+        <ChevronLeftIcon />
+        <span className="ml-1">Manage events</span>
+      </Link>
+      <Button asChild className="rounded-full p-3 h-fit" variant={'secondary'}>
+        <Link href={`/cms/events/${eventId}/edit`}>
+          <PencilIcon size={16} />
+        </Link>
+      </Button>
+    </nav>
+  )
+}
+
 export default async function EventViewPage({
   params,
 }: {
@@ -46,36 +62,20 @@ export default async function EventViewPage({
 
   console.log('event', event)
 
-  const backLink = `/cms/events`
-
   return (
-    <div className="max-w-screen-md mx-auto w-full bg-background flex flex-col px-5">
-      <section className="flex mx-auto w-full bg-background mb-8 mt-4 justify-between items-center">
-        <Link href={backLink} className="mr-4">
-          <ChevronLeftIcon className="h-6 w-6" />
-          <span className="sr-only">Back</span>
-        </Link>
-        <div className="ml-auto">
-          <Button
-            asChild
-            className="rounded-full p-4 inline-table"
-            variant={'secondary'}
-          >
-            <Link href={`/cms/events/${event.id}/edit`}>
-              <PencilIcon size={16} />
-            </Link>
-          </Button>
-        </div>
-      </section>
-      <section>
-        <h1 className="text-2xl font-medium mb-2">{event.name}</h1>
-        <p>{event.location}</p>
-        <p className="text-muted-foreground">
+    <main className="flex flex-col min-h-screen max-h-screen max-w-screen-md mx-auto">
+      <Navbar eventId={eventId} />
+      <section className="px-5">
+        <h1 className="text-3xl font-medium mb-4">{event.name}</h1>
+        <p className="text-muted-foreground text-lg">{event.location}</p>
+        <p className="">
           {format(event.startedAt, 'PPP')} - {format(event.endedAt, 'PPP')}
         </p>
       </section>
-      <Separator className="my-8" />
-      <section className="">
+      <div className="px-5">
+        <Separator className="my-8" />
+      </div>
+      <section className="px-5">
         <h2 className="text-2xl font-medium mb-6">Programs</h2>
         <div className="flex flex-col gap-4">
           {event.competePrograms.map((program) => (
@@ -95,6 +95,6 @@ export default async function EventViewPage({
           ))}
         </div>
       </section>
-    </div>
+    </main>
   )
 }
