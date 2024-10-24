@@ -23,13 +23,22 @@ const rules = {
   speed: [{ label: 'Time', value: 'speed-time' }],
 } as Record<string, { label: string; value: string }[]>
 
+const roundOrder = ['Qualifications', 'Semi-Final', 'Final']
+const getRoundIndex = (roundName: string) =>
+  roundOrder.findIndex((x) => x === roundName)
+
 export function ProgramSection({
   competePrograms,
 }: {
   competePrograms: EventWithCompetePrograms['competePrograms']
 }) {
   const [optimisticCompetePrograms, setOptimisticCompetePrograms] = useState(
-    competePrograms.sort((a, b) => a.name.localeCompare(b.name)),
+    competePrograms.map((program) => ({
+      ...program,
+      competeRounds: program.competeRounds.sort(
+        (a, b) => getRoundIndex(a.name) - getRoundIndex(b.name),
+      ),
+    })),
   )
 
   const handleRoundChange = async ({
@@ -135,7 +144,7 @@ export function ProgramSection({
                 key={disciplineOption.value}
                 htmlFor={`${program.id}-${disciplineOption.value}`}
                 className={cn(
-                  'hover:bg-secondary cursor-pointer flex items-center border p-6 space-x-2 rounded-2xl',
+                  'hover:bg-primary/10 transition-colors cursor-pointer flex items-center border p-6 space-x-2 rounded-2xl',
                   program.discipline === disciplineOption.value &&
                     'ring ring-primary ring-2 bg-secondary',
                 )}
@@ -165,7 +174,7 @@ export function ProgramSection({
                 key={ruleOption.value}
                 htmlFor={`${program.id}-${ruleOption.value}`}
                 className={cn(
-                  'hover:bg-secondary cursor-pointer flex items-center border p-6 space-x-2 rounded-2xl',
+                  'hover:bg-primary/10 transition-colors cursor-pointer flex items-center border p-6 space-x-2 rounded-2xl',
                   program.rule === ruleOption.value &&
                     'ring ring-primary ring-2 bg-secondary',
                 )}
@@ -180,30 +189,32 @@ export function ProgramSection({
           </RadioGroup>
 
           <p className="mt-4 mb-1 text-muted-foreground">Rounds</p>
-          {program.competeRounds?.map((round) => (
-            <Label
-              key={round.id}
-              htmlFor={`${program.id}-${round.name}`}
-              className={cn(
-                'hover:bg-secondary cursor-pointer flex items-center border p-6 space-x-2 rounded-2xl',
-                round.status === 'ACTIVE' &&
-                  'ring ring-primary ring-2 bg-secondary',
-              )}
-            >
-              <Checkbox
-                id={`${program.id}-${round.name}`}
-                checked={round.status === 'ACTIVE'}
-                onCheckedChange={(checked: boolean) => {
-                  handleRoundChange({
-                    programId: program.id,
-                    round: round.name,
-                    checked,
-                  })
-                }}
-              />
-              <span>{round.name}</span>
-            </Label>
-          ))}
+          <div className="flex flex-col space-y-4">
+            {program.competeRounds?.map((round) => (
+              <Label
+                key={round.id}
+                htmlFor={`${program.id}-${round.name}`}
+                className={cn(
+                  'hover:bg-primary/10 transition-colors cursor-pointer flex items-center border p-6 space-x-2 rounded-2xl',
+                  round.status === 'ACTIVE' &&
+                    'ring ring-primary ring-2 bg-secondary',
+                )}
+              >
+                <Checkbox
+                  id={`${program.id}-${round.name}`}
+                  checked={round.status === 'ACTIVE'}
+                  onCheckedChange={(checked: boolean) => {
+                    handleRoundChange({
+                      programId: program.id,
+                      round: round.name,
+                      checked,
+                    })
+                  }}
+                />
+                <span>{round.name}</span>
+              </Label>
+            ))}
+          </div>
         </div>
       ))}
     </>

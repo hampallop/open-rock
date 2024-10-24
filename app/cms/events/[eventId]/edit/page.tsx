@@ -13,6 +13,7 @@ async function queryEventWithCompetePrograms(eventId: string) {
     .eq('id', eventId)
     .order('name', { referencedTable: 'competePrograms' })
     .single()
+
   return response
 }
 export type EventWithCompetePrograms = QueryData<
