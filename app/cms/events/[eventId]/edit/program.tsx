@@ -1,21 +1,13 @@
 'use client'
 import { EventWithCompetePrograms } from '@/app/cms/events/[eventId]/edit/page'
 import { Button } from '@/components/ui/button'
-import { Label } from '@/components/ui/label'
-import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
-import { cn } from '@/lib/utils'
+import { RadioGroup } from '@/components/ui/radio-group'
 import supabase from '@/utils/supabase'
 import { PencilIcon } from 'lucide-react'
 import { useState } from 'react'
-import { Checkbox } from '@/components/ui/checkbox'
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-} from '@/components/ui/dialog'
-import { Input } from '@/components/ui/input'
-import { SubmitButton } from '@/components/submit-button'
+import { RadioGroupItemEnhanced } from '@/components/radio-group-item-enhanced'
+import { RouteEditDialog } from '@/components/route-edit-dialog'
+import { CheckboxEnhanced } from '@/components/checkbox-enhance'
 
 const disciplines = [
   { label: 'Boulder', value: 'boulder' },
@@ -34,19 +26,6 @@ const rules = {
 const roundOrder = ['Qualifications', 'Semi-Final', 'Final']
 const getRoundIndex = (roundName: string) =>
   roundOrder.findIndex((x) => x === roundName)
-
-const updateRouteAmountAction =
-  ({ roundId, inputName }: { roundId: string; inputName: string }) =>
-  async (formData: FormData) => {
-    const routeAmount = Number(formData.get(inputName)?.toString())
-
-    await supabase
-      .from('competeRounds')
-      .update({ routeAmount })
-      .eq('id', roundId)
-
-    return routeAmount
-  }
 
 export function ProgramSection({
   competePrograms,
@@ -147,6 +126,7 @@ export function ProgramSection({
   return (
     <>
       <h2 className="text-2xl font-medium mb-2">Programs</h2>
+
       {optimisticCompetePrograms?.map((program) => (
         <div key={program.id} className="mb-8">
           <div className="flex justify-between items-center mb-4">
@@ -158,7 +138,7 @@ export function ProgramSection({
 
           <p className="mt-4 mb-1 text-muted-foreground">Discipline</p>
           <RadioGroup
-            className="grid grid-cols-3 gap-2"
+            className="grid grid-rows-3 gap-2"
             value={program.discipline}
             onValueChange={(value: string) => {
               handleCompeteProgramChange({
@@ -168,21 +148,14 @@ export function ProgramSection({
             }}
           >
             {disciplines.map((disciplineOption) => (
-              <Label
+              <RadioGroupItemEnhanced
                 key={disciplineOption.value}
-                htmlFor={`${program.id}-${disciplineOption.value}`}
-                className={cn(
-                  'hover:bg-primary/10 transition-colors cursor-pointer flex items-center border p-6 space-x-2 rounded-2xl',
-                  program.discipline === disciplineOption.value &&
-                    'ring ring-primary ring-2 bg-secondary',
-                )}
+                id={`${program.id}-${disciplineOption.value}`}
+                active={program.discipline === disciplineOption.value}
+                value={disciplineOption.value}
               >
-                <RadioGroupItem
-                  value={disciplineOption.value}
-                  id={`${program.id}-${disciplineOption.value}`}
-                />
                 <span>{disciplineOption.label}</span>
-              </Label>
+              </RadioGroupItemEnhanced>
             ))}
           </RadioGroup>
 
@@ -198,47 +171,32 @@ export function ProgramSection({
             }}
           >
             {rules[program.discipline]?.map((ruleOption) => (
-              <Label
+              <RadioGroupItemEnhanced
                 key={ruleOption.value}
-                htmlFor={`${program.id}-${ruleOption.value}`}
-                className={cn(
-                  'hover:bg-primary/10 transition-colors cursor-pointer flex items-center border p-6 space-x-2 rounded-2xl',
-                  program.rule === ruleOption.value &&
-                    'ring ring-primary ring-2 bg-secondary',
-                )}
+                id={`${program.id}-${ruleOption.value}`}
+                active={program.rule === ruleOption.value}
+                value={ruleOption.value}
               >
-                <RadioGroupItem
-                  value={ruleOption.value}
-                  id={`${program.id}-${ruleOption.value}`}
-                />
                 <span>{ruleOption.label}</span>
-              </Label>
+              </RadioGroupItemEnhanced>
             ))}
           </RadioGroup>
 
           <p className="mt-4 mb-1 text-muted-foreground">Rounds</p>
           <div className="flex flex-col space-y-4">
             {program.competeRounds?.map((round) => (
-              <Label
+              <CheckboxEnhanced
                 key={round.id}
-                htmlFor={`${program.id}-${round.name}`}
-                className={cn(
-                  'hover:bg-primary/10 transition-colors cursor-pointer flex items-center border p-6 rounded-2xl',
-                  round.status === 'ACTIVE' &&
-                    'ring ring-primary ring-2 bg-secondary',
-                )}
+                id={`${program.id}-${round.name}`}
+                checked={round.status === 'ACTIVE'}
+                onCheckedChange={(checked: boolean) => {
+                  handleRoundChange({
+                    programId: program.id,
+                    round: round.name,
+                    checked,
+                  })
+                }}
               >
-                <Checkbox
-                  id={`${program.id}-${round.name}`}
-                  checked={round.status === 'ACTIVE'}
-                  onCheckedChange={(checked: boolean) => {
-                    handleRoundChange({
-                      programId: program.id,
-                      round: round.name,
-                      checked,
-                    })
-                  }}
-                />
                 <span className="ml-2">{round.name}</span>
 
                 <span
@@ -255,7 +213,7 @@ export function ProgramSection({
                 >
                   {round.routeAmount} routes
                 </span>
-              </Label>
+              </CheckboxEnhanced>
             ))}
           </div>
 
@@ -282,55 +240,5 @@ export function ProgramSection({
         </div>
       ))}
     </>
-  )
-}
-
-function RouteEditDialog({
-  open,
-  onOpenChange,
-  title,
-  routeAmount,
-  roundId,
-  onSave = () => {},
-}: {
-  open: boolean
-  onOpenChange: (open: boolean) => void
-  title: string
-  routeAmount: number
-  roundId: string
-  onSave?: (routeAmount: number) => void
-}) {
-  return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent>
-        <DialogHeader>
-          <DialogTitle>{title}</DialogTitle>
-        </DialogHeader>
-        <form>
-          <div>
-            <Input name="routeAmount" defaultValue={routeAmount} type="tel" />
-          </div>
-          <div className="flex mt-4">
-            <SubmitButton
-              formAction={async (formData) => {
-                const routeAmount = await updateRouteAmountAction({
-                  roundId,
-                  inputName: 'routeAmount',
-                })(formData)
-
-                if (routeAmount) {
-                  onSave?.(routeAmount)
-                }
-                onOpenChange(false)
-              }}
-              pendingText="Saving..."
-              className="ml-auto"
-            >
-              Save and continue
-            </SubmitButton>
-          </div>
-        </form>
-      </DialogContent>
-    </Dialog>
   )
 }
