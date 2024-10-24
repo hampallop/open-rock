@@ -15,7 +15,7 @@ export function FooterNavItem({
     <Link
       href={link}
       className={cn(
-        'text-muted-foreground flex flex-col items-center cursor-pointer hover:bg-accent rounded-xl p-2',
+        'text-muted-foreground flex flex-col text-center items-center cursor-pointer hover:bg-accent rounded-xl p-2',
         pathname === link && 'text-rose-600',
       )}
     >

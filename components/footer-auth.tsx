@@ -2,7 +2,12 @@ import { signOutAction } from '@/app/actions'
 import { FooterNavItem } from '@/components/footer-nav-item'
 import { createClient } from '@/utils/supabase/server'
 
-import { GlobeIcon, LogOutIcon, SquarePlusIcon } from 'lucide-react'
+import {
+  GlobeIcon,
+  LogOutIcon,
+  SquarePlusIcon,
+  UsersRoundIcon,
+} from 'lucide-react'
 
 export async function FooterAuth() {
   const supabase = await createClient()
@@ -12,7 +17,7 @@ export async function FooterAuth() {
 
   return (
     <footer className="h-20 w-full border-t flex items-center bg-card px-5 py-2 justify-between">
-      <section className="flex max-w-screen-md mx-auto w-full bg-background space-x-2">
+      <section className="bg-background grid grid-flow-col auto-cols-fr">
         <FooterNavItem link="/">
           <GlobeIcon className="mb-1" />
           <span className="text-xs">Home</span>
@@ -21,12 +26,16 @@ export async function FooterAuth() {
           <SquarePlusIcon className="mb-1" />
           <span className="text-xs">Manage events</span>
         </FooterNavItem>
+        <FooterNavItem link="/cms/athletes">
+          <UsersRoundIcon className="mb-1" />
+          <span className="text-xs">Manage athletes</span>
+        </FooterNavItem>
         {user ? (
-          <form action={signOutAction}>
+          <form action={signOutAction} className="flex">
             <button
               type="submit"
               className={
-                'text-muted-foreground flex flex-col items-center cursor-pointer hover:bg-accent rounded-xl p-2'
+                'text-muted-foreground flex flex-col items-center cursor-pointer hover:bg-accent rounded-xl p-2 w-full'
               }
             >
               <LogOutIcon className="mb-1" />
