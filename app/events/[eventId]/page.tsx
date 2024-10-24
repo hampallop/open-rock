@@ -2,8 +2,8 @@ import { EventDetails } from '@/components/event-details'
 import { createClient } from '@/utils/supabase/server'
 import { QueryData } from '@supabase/supabase-js'
 
-function queryEventWithCompetePrograms(eventId: string) {
-  const supabase = createClient()
+async function queryEventWithCompetePrograms(eventId: string) {
+  const supabase = await createClient()
   return supabase
     .from('events')
     .select('*, competePrograms(*)')
@@ -19,9 +19,9 @@ export default async function EventPage({
 }: {
   params: { eventId: string }
 }) {
-  const { data: event, error: _error } = await queryEventWithCompetePrograms(
-    params.eventId,
-  )
+  const { eventId } = await params
+  const { data: event, error: _error } =
+    await queryEventWithCompetePrograms(eventId)
 
   if (!event) {
     return <div>No event found</div>

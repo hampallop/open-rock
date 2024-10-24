@@ -2,8 +2,8 @@ import { CompetitionProgram } from '@/components/competition-program'
 import { createClient } from '@/utils/supabase/server'
 import { QueryData } from '@supabase/supabase-js'
 
-function queryCompeteProgramWithCompeteRounds(programId: string) {
-  const supabase = createClient()
+async function queryCompeteProgramWithCompeteRounds(programId: string) {
+  const supabase = await createClient()
   return supabase
     .from('competePrograms')
     .select('*, competeRounds(*, competeResults(*, athletes(*)))')
@@ -19,8 +19,9 @@ export default async function ProgramPage({
 }: {
   params: { eventId: string; programId: string }
 }) {
+  const { programId } = await params
   const { data: competeProgram, error: _error } =
-    await queryCompeteProgramWithCompeteRounds(params.programId)
+    await queryCompeteProgramWithCompeteRounds(programId)
   console.log(JSON.stringify(competeProgram, null, 2))
   if (!competeProgram) {
     return <div>No program found</div>
