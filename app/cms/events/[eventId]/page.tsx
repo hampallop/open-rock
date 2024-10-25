@@ -2,7 +2,7 @@ import { createClient } from '@/utils/supabase/server'
 import { format } from 'date-fns'
 import { QueryData } from '@supabase/supabase-js'
 import { Button } from '@/components/ui/button'
-import { ChevronLeftIcon, PencilIcon, PlusIcon } from 'lucide-react'
+import { ChevronLeftIcon, PencilIcon } from 'lucide-react'
 import Link from 'next/link'
 import { Separator } from '@/components/ui/separator'
 
@@ -48,9 +48,8 @@ function Navbar({ eventId }: { eventId: string }) {
 export default async function EventViewPage({
   params,
 }: {
-  params: { eventId: string }
+  params: Promise<{ eventId: string }>
 }) {
-  // asynchronous access of `params.id`.
   const { eventId } = await params
 
   const { data: event, error: _error } =

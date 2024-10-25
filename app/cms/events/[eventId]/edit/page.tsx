@@ -34,7 +34,7 @@ function Navbar({ eventId }: { eventId: string }) {
 export default async function EventEditPage({
   params,
 }: {
-  params: { eventId: string }
+  params: Promise<{ eventId: string }>
 }) {
   const { eventId } = await params
 

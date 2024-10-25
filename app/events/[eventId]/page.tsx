@@ -17,7 +17,7 @@ export type EventWithCompetePrograms = QueryData<
 export default async function EventPage({
   params,
 }: {
-  params: { eventId: string }
+  params: Promise<{ eventId: string }>
 }) {
   const { eventId } = await params
   const { data: event, error: _error } =
