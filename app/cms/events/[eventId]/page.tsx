@@ -82,12 +82,13 @@ export default async function EventViewPage({
               <h3 className="text-md font-medium">{program.name}</h3>
               <div className="grid grid-cols-3 gap-2">
                 {program.competeRounds.sort(sortRounds).map((round) => (
-                  <div
+                  <Link
                     key={round.id}
-                    className="flex justify-center border rounded-lg p-4 text-sm"
+                    href={`/cms/events/${eventId}/${program.id}/${round.id}`}
+                    className="hover:bg-primary/10 transition-colors cursor-pointer flex items-center border p-6 space-x-2 rounded-2xl text-sm justify-center"
                   >
                     {round.name}
-                  </div>
+                  </Link>
                 ))}
               </div>
             </section>
