@@ -34,7 +34,6 @@ export function AthletesScreen({
   const [showDeleteDialog, setShowDeleteDialog] = useState(false)
   const [selectedAthlete, setSelectedAthlete] =
     useState<Tables<'athletes'> | null>(null)
-  console.log('lastFocusId', lastFocusId)
 
   const deleteAthlete = async () => {
     setAthletes(

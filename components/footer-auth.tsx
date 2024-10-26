@@ -16,7 +16,7 @@ export async function FooterAuth() {
   } = await supabase.auth.getUser()
 
   return (
-    <footer className="h-20 w-full border-t flex items-center bg-card px-5 py-2 justify-between">
+    <footer className="w-full border-t flex items-center bg-card px-5 py-2 justify-between">
       <section className="bg-background grid grid-flow-col auto-cols-fr">
         <FooterNavItem link="/">
           <GlobeIcon className="mb-1" />
