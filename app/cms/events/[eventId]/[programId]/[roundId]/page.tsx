@@ -2,6 +2,7 @@ import { ChevronLeftIcon } from 'lucide-react'
 import Link from 'next/link'
 import { createClient } from '@/utils/supabase/server'
 import { QueryData } from '@supabase/supabase-js'
+import { Button } from '@/components/ui/button'
 
 async function queryRoundWithProgram(roundId: string) {
   const supabase = await createClient()
@@ -33,7 +34,7 @@ export default async function EventEditPage({
 }: {
   params: Promise<{ eventId: string; programId: string; roundId: string }>
 }) {
-  const { eventId, programId: _programId, roundId } = await params
+  const { eventId, programId, roundId } = await params
 
   const { data: roundData, error: _error } =
     await queryRoundWithProgram(roundId)
@@ -44,12 +45,17 @@ export default async function EventEditPage({
   return (
     <main className="mx-auto flex min-h-screen max-w-screen-md flex-col">
       <Navbar eventId={eventId} />
-      <section className="px-5">
+      <section className="flex grow flex-col px-5">
         <h1 className="mb-4 text-3xl font-medium">
           {roundData.competeProgram?.name}
           <br />
           {roundData.name}
         </h1>
+        <Button asChild className="mt-10">
+          <Link href={`/cms/events/${eventId}/${programId}/${roundId}/judge`}>
+            Judge
+          </Link>
+        </Button>
       </section>
     </main>
   )
