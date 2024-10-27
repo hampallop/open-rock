@@ -16,8 +16,8 @@ export async function FooterAuth() {
   } = await supabase.auth.getUser()
 
   return (
-    <footer className="w-full border-t flex items-center bg-card px-5 py-2 justify-between">
-      <section className="bg-background grid grid-flow-col auto-cols-fr">
+    <footer className="flex w-full items-center justify-between border-t bg-card px-5 py-2">
+      <section className="grid auto-cols-fr grid-flow-col bg-background">
         <FooterNavItem link="/">
           <GlobeIcon className="mb-1" />
           <span className="text-xs">Home</span>
@@ -35,7 +35,7 @@ export async function FooterAuth() {
             <button
               type="submit"
               className={
-                'text-muted-foreground flex flex-col items-center cursor-pointer hover:bg-accent rounded-xl p-2 w-full'
+                'flex w-full cursor-pointer flex-col items-center rounded-xl p-2 text-muted-foreground hover:bg-accent'
               }
             >
               <LogOutIcon className="mb-1" />

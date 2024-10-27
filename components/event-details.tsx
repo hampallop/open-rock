@@ -13,18 +13,18 @@ export function EventDetails({ event }: { event: EventWithCompetePrograms }) {
           <CardTitle>Event Details</CardTitle>
         </CardHeader>
         <CardContent>
-          <p className="flex items-center text-sm text-muted-foreground mb-2">
+          <p className="mb-2 flex items-center text-sm text-muted-foreground">
             <MapPinIcon className="mr-2 h-4 w-4" />
             {event.location}
           </p>
-          <p className="flex items-center text-sm text-muted-foreground mb-4">
+          <p className="mb-4 flex items-center text-sm text-muted-foreground">
             <CalendarIcon className="mr-2 h-4 w-4" />
             {format(event.startedAt, 'PPPP')} - {format(event.endedAt, 'PPPP')}
           </p>
           <p>{event.description}</p>
         </CardContent>
       </Card>
-      <h2 className="text-xl font-bold mb-4">Competition Programs</h2>
+      <h2 className="mb-4 text-xl font-bold">Competition Programs</h2>
       <div className="grid gap-4 sm:grid-cols-2">
         {event.competePrograms.map((program) => (
           <Link

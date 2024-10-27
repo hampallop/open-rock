@@ -19,8 +19,8 @@ export function CheckboxEnhanced({
     <Label
       htmlFor={id}
       className={cn(
-        'hover:bg-primary/10 transition-colors cursor-pointer flex items-center border p-6 rounded-2xl',
-        checked && 'ring ring-primary ring-2 bg-secondary',
+        'flex cursor-pointer items-center rounded-2xl border p-6 transition-colors hover:bg-primary/10',
+        checked && 'bg-secondary ring ring-2 ring-primary',
         className,
       )}
     >

@@ -21,7 +21,7 @@ export function StepFooter({
   const isLastStep = currentStep === totalSteps
 
   return (
-    <div className="h-20 w-full border flex items-center bg-card px-5 justify-between">
+    <div className="flex h-20 w-full items-center justify-between border bg-card px-5">
       {!isFirstStep && (
         <Button variant="ghost" className="underline" onClick={onPrevious}>
           Previous

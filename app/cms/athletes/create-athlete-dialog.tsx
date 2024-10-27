@@ -45,7 +45,7 @@ export function CreateAthleteDialog({
         </DialogHeader>
         <form>
           <Input name="name" placeholder="Athlete name" />
-          <div className="flex mt-4">
+          <div className="mt-4 flex">
             <SubmitButton
               formAction={async (formData) => {
                 const newAthlete = await createAthleteAction({

@@ -19,7 +19,7 @@ export type RoundWithProgram = QueryData<
 
 function Navbar({ eventId }: { eventId: string }) {
   return (
-    <nav className="flex justify-between items-center px-5 py-3 min-h-16">
+    <nav className="flex min-h-16 items-center justify-between px-5 py-3">
       <Link href={`/cms/events/${eventId}`} className="flex items-center">
         <ChevronLeftIcon />
         <span className="ml-1">Back</span>
@@ -42,10 +42,10 @@ export default async function EventEditPage({
   }
   console.log('program', JSON.stringify(roundData, null, 2))
   return (
-    <main className="flex flex-col min-h-screen max-w-screen-md mx-auto">
+    <main className="mx-auto flex min-h-screen max-w-screen-md flex-col">
       <Navbar eventId={eventId} />
       <section className="px-5">
-        <h1 className="text-3xl font-medium mb-4 mb-4">
+        <h1 className="mb-4 text-3xl font-medium">
           {roundData.competeProgram?.name}
           <br />
           {roundData.name}

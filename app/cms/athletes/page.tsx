@@ -11,7 +11,7 @@ export default async function AthletesPage() {
   }
 
   return (
-    <main className="flex flex-col min-h-screen max-h-screen max-w-screen-md mx-auto">
+    <main className="mx-auto flex max-h-screen min-h-screen max-w-screen-md flex-col">
       <AthletesScreen athletes={athletes} />
       <FooterAuth />
     </main>

@@ -6,7 +6,7 @@ import { createClient } from '@/utils/supabase/server'
 
 function Navbar() {
   return (
-    <nav className="flex justify-between items-center px-5 py-3 min-h-16">
+    <nav className="flex min-h-16 items-center justify-between px-5 py-3">
       <Button
         asChild
         className="ml-auto rounded-full p-2"
@@ -27,7 +27,7 @@ export default async function Home() {
   }
 
   return (
-    <main className="flex flex-col min-h-screen max-h-screen max-w-screen-md mx-auto">
+    <main className="mx-auto flex max-h-screen min-h-screen max-w-screen-md flex-col">
       <Navbar />
       <EventList title="Events" events={events} />
       <FooterAuth />

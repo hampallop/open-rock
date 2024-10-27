@@ -165,7 +165,7 @@ export default function CreateEventForm() {
         return (
           <div className="space-y-4">
             <div className="mb-6">
-              <h1 className="text-2xl font-medium leading-none tracking-tight mb-2">
+              <h1 className="mb-2 text-2xl font-medium leading-none tracking-tight">
                 Fill your event.
               </h1>
             </div>
@@ -213,7 +213,7 @@ export default function CreateEventForm() {
         return (
           <div className="space-y-4">
             <div className="mb-6">
-              <h1 className="text-2xl font-medium leading-none tracking-tight mb-2">
+              <h1 className="mb-2 text-2xl font-medium leading-none tracking-tight">
                 How many programs do you have?
               </h1>
               <h2 className="text-lg text-muted-foreground">
@@ -223,7 +223,7 @@ export default function CreateEventForm() {
             </div>
             <div className="flex items-center space-x-4">
               <Button
-                className="size-10 p-1 rounded-full"
+                className="size-10 rounded-full p-1"
                 variant={'outline'}
                 onClick={() =>
                   setPrograms(programs.slice(0, programs.length - 1))
@@ -233,7 +233,7 @@ export default function CreateEventForm() {
               </Button>
               <span className="text-2xl font-bold">{programs.length}</span>
               <Button
-                className="size-10 p-1 rounded-full"
+                className="size-10 rounded-full p-1"
                 variant={'outline'}
                 onClick={() =>
                   setPrograms([...programs, { name: '', rounds: [] }])
@@ -262,14 +262,14 @@ export default function CreateEventForm() {
         return (
           <div className="space-y-4">
             <div className="mb-6">
-              <h1 className="text-2xl font-medium leading-none tracking-tight mb-2">
+              <h1 className="mb-2 text-2xl font-medium leading-none tracking-tight">
                 How many rounds does this program have?
               </h1>
             </div>
             {programs.map((program, programIndex) => (
               <div key={programIndex} className="">
-                <h3 className="text-lg font-semibold mb-2">{program.name}</h3>
-                <div className="space-y-2 mb-8">
+                <h3 className="mb-2 text-lg font-semibold">{program.name}</h3>
+                <div className="mb-8 space-y-2">
                   {roundOptions.map((option) => (
                     <div
                       key={option.id}
@@ -298,7 +298,7 @@ export default function CreateEventForm() {
         return (
           <div className="space-y-4">
             <div className="mb-6">
-              <h1 className="text-2xl font-medium leading-none tracking-tight mb-2">
+              <h1 className="mb-2 text-2xl font-medium leading-none tracking-tight">
                 How many routes each round have?
               </h1>
               <h2 className="text-lg text-muted-foreground">
@@ -317,12 +317,12 @@ export default function CreateEventForm() {
                       key={roundIndex}
                       className="flex items-center space-y-4"
                     >
-                      <Label className="text-lg text-muted-foreground mr-auto">
+                      <Label className="mr-auto text-lg text-muted-foreground">
                         {round.name}
                       </Label>
-                      <div className="space-x-4 flex items-center">
+                      <div className="flex items-center space-x-4">
                         <Button
-                          className="size-10 p-1 rounded-full"
+                          className="size-10 rounded-full p-1"
                           variant={'outline'}
                           onClick={() =>
                             handleRouteAmountChange(
@@ -338,7 +338,7 @@ export default function CreateEventForm() {
                           {round.routeAmount}
                         </span>
                         <Button
-                          className="size-10 p-1 rounded-full"
+                          className="size-10 rounded-full p-1"
                           variant={'outline'}
                           onClick={() =>
                             handleRouteAmountChange(
@@ -397,9 +397,9 @@ export default function CreateEventForm() {
 
   return (
     <>
-      <main className="max-h-[calc(100vh-143px)] py-8 flex flex-grow w-full overflow-y-auto">
-        <div className="max-w-2xl mx-auto w-full h-full px-5">
-          <h2 className="text-3xl font-bold mb-6">Create Event</h2>
+      <main className="flex max-h-[calc(100vh-143px)] w-full flex-grow overflow-y-auto py-8">
+        <div className="mx-auto h-full w-full max-w-2xl px-5">
+          <h2 className="mb-6 text-3xl font-bold">Create Event</h2>
           {renderStepContent()}
         </div>
       </main>

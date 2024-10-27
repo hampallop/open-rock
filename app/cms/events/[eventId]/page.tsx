@@ -31,12 +31,12 @@ const sortRounds = (a: CompeteRound, b: CompeteRound) =>
 
 function Navbar({ eventId }: { eventId: string }) {
   return (
-    <nav className="flex justify-between items-center px-5 py-3 min-h-16">
+    <nav className="flex min-h-16 items-center justify-between px-5 py-3">
       <Link href={'/cms/events'} className="flex items-center">
         <ChevronLeftIcon />
         <span className="ml-1">Manage events</span>
       </Link>
-      <Button asChild className="rounded-full p-3 h-fit" variant={'secondary'}>
+      <Button asChild className="h-fit rounded-full p-3" variant={'secondary'}>
         <Link href={`/cms/events/${eventId}/edit`}>
           <PencilIcon size={16} />
         </Link>
@@ -62,11 +62,11 @@ export default async function EventViewPage({
   console.log('event', event)
 
   return (
-    <main className="flex flex-col min-h-screen max-h-screen max-w-screen-md mx-auto">
+    <main className="mx-auto flex max-h-screen min-h-screen max-w-screen-md flex-col">
       <Navbar eventId={eventId} />
       <section className="px-5">
-        <h1 className="text-3xl font-medium mb-4">{event.name}</h1>
-        <p className="text-muted-foreground text-lg">{event.location}</p>
+        <h1 className="mb-4 text-3xl font-medium">{event.name}</h1>
+        <p className="text-lg text-muted-foreground">{event.location}</p>
         <p className="">
           {format(event.startedAt, 'PPP')} - {format(event.endedAt, 'PPP')}
         </p>
@@ -75,7 +75,7 @@ export default async function EventViewPage({
         <Separator className="my-8" />
       </div>
       <section className="px-5">
-        <h2 className="text-2xl font-medium mb-6">Programs</h2>
+        <h2 className="mb-6 text-2xl font-medium">Programs</h2>
         <div className="flex flex-col gap-4">
           {event.competePrograms.map((program) => (
             <section key={program.id}>
@@ -85,7 +85,7 @@ export default async function EventViewPage({
                   <Link
                     key={round.id}
                     href={`/cms/events/${eventId}/${program.id}/${round.id}`}
-                    className="hover:bg-primary/10 transition-colors cursor-pointer flex items-center border p-6 space-x-2 rounded-2xl text-sm justify-center"
+                    className="flex cursor-pointer items-center justify-center space-x-2 rounded-2xl border p-6 text-sm transition-colors hover:bg-primary/10"
                   >
                     {round.name}
                   </Link>

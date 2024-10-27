@@ -127,14 +127,14 @@ export function ProgramSection({
 
   return (
     <>
-      <h2 className="text-2xl font-medium mb-2">Programs</h2>
+      <h2 className="mb-2 text-2xl font-medium">Programs</h2>
 
       {optimisticCompetePrograms?.map((program) => (
         <div key={program.id} className="mb-8">
-          <div className="flex justify-between items-center mb-4">
+          <div className="mb-4 flex items-center justify-between">
             <h3 className="text-lg font-medium">{program.name}</h3>
             <button
-              className="underline leading-6 mb-auto text-sm font-medium"
+              className="mb-auto text-sm font-medium leading-6 underline"
               onClick={() => {
                 setProgramNameEditDialogProperties({
                   programId: program.id,
@@ -146,7 +146,7 @@ export function ProgramSection({
               Edit
             </button>
           </div>
-          <p className="mt-4 mb-1 text-muted-foreground">Discipline</p>
+          <p className="mb-1 mt-4 text-muted-foreground">Discipline</p>
           <RadioGroup
             className="grid grid-rows-3 gap-2"
             value={program.discipline}
@@ -168,7 +168,7 @@ export function ProgramSection({
               </RadioGroupItemEnhanced>
             ))}
           </RadioGroup>
-          <p className="mt-4 mb-1 text-muted-foreground">Rule</p>
+          <p className="mb-1 mt-4 text-muted-foreground">Rule</p>
           <RadioGroup
             className="grid grid-cols-2 gap-2"
             value={program.rule}
@@ -190,7 +190,7 @@ export function ProgramSection({
               </RadioGroupItemEnhanced>
             ))}
           </RadioGroup>
-          <p className="mt-4 mb-1 text-muted-foreground">Rounds</p>
+          <p className="mb-1 mt-4 text-muted-foreground">Rounds</p>
           <div className="flex flex-col space-y-4">
             {program.competeRounds?.map((round) => (
               <CheckboxEnhanced
@@ -208,7 +208,7 @@ export function ProgramSection({
                 <span className="ml-2">{round.name}</span>
 
                 <span
-                  className="ml-auto underline -m-2 p-2 hover:bg-primary/5 transition-colors rounded-lg text-muted-foreground text-xs"
+                  className="-m-2 ml-auto rounded-lg p-2 text-xs text-muted-foreground underline transition-colors hover:bg-primary/5"
                   onClick={(e) => {
                     e.preventDefault()
                     setRouteEditDialogProperties({

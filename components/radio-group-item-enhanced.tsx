@@ -17,8 +17,8 @@ export function RadioGroupItemEnhanced({
     <Label
       htmlFor={id}
       className={cn(
-        'hover:bg-primary/10 transition-colors cursor-pointer flex items-center border p-6 space-x-2 rounded-2xl',
-        active && 'ring ring-primary ring-2 bg-secondary',
+        'flex cursor-pointer items-center space-x-2 rounded-2xl border p-6 transition-colors hover:bg-primary/10',
+        active && 'bg-secondary ring ring-2 ring-primary',
       )}
     >
       <RadioGroupItem value={value} id={id} />

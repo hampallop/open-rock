@@ -49,7 +49,7 @@ export function RouteEditDialog({
           <div>
             <Input name="routeAmount" defaultValue={routeAmount} type="tel" />
           </div>
-          <div className="flex mt-4">
+          <div className="mt-4 flex">
             <SubmitButton
               formAction={async (formData) => {
                 const routeAmount = await updateRouteAmountAction({

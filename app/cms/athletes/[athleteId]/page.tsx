@@ -22,17 +22,17 @@ export default async function AthleteViewPage({
   }
 
   return (
-    <main className="flex flex-col min-h-screen max-h-screen max-w-screen-md mx-auto">
-      <nav className="flex justify-between items-center px-5 py-3 min-h-16">
+    <main className="mx-auto flex max-h-screen min-h-screen max-w-screen-md flex-col">
+      <nav className="flex min-h-16 items-center justify-between px-5 py-3">
         <Link href={'/cms/athletes'} className="flex items-center">
           <ChevronLeftIcon />
           <span className="ml-1">Manage athletes</span>
         </Link>
       </nav>
       <div className="flex flex-col bg-background px-5">
-        <h1 className="text-3xl font-medium mb-4 mb-4">{athlete.name}</h1>
+        <h1 className="mb-4 text-3xl font-medium">{athlete.name}</h1>
       </div>
-      <div className="overflow-y-auto px-5 py-2 flex-grow">
+      <div className="flex-grow overflow-y-auto px-5 py-2">
         <div className="flex flex-col">
           <p>Created: {format(athlete.createdAt, 'MMM d, yyyy')}</p>
         </div>

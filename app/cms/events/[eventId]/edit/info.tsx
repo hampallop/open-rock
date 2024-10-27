@@ -44,9 +44,9 @@ export function InfoSection({ event }: { event: EventWithCompetePrograms }) {
 
   return (
     <>
-      <h1 className="text-3xl font-medium mb-8">Edit event</h1>
+      <h1 className="mb-8 text-3xl font-medium">Edit event</h1>
       <div className="flex flex-col gap-2">
-        <div className="flex justify-between pb-4 mb-4 border-b">
+        <div className="mb-4 flex justify-between border-b pb-4">
           <div>
             <p>Event Name</p>
             <p className="text-muted-foreground">{optimisticEvent?.name}</p>
@@ -57,7 +57,7 @@ export function InfoSection({ event }: { event: EventWithCompetePrograms }) {
               checked ? setDialogType('name') : setDialogType(null)
             }
           >
-            <DialogTrigger className="underline leading-6 mb-auto text-sm font-medium">
+            <DialogTrigger className="mb-auto text-sm font-medium leading-6 underline">
               Edit
             </DialogTrigger>
             <DialogContent>
@@ -71,7 +71,7 @@ export function InfoSection({ event }: { event: EventWithCompetePrograms }) {
                     defaultValue={optimisticEvent?.name ?? ''}
                   />
                 </div>
-                <div className="flex mt-4">
+                <div className="mt-4 flex">
                   <SubmitButton
                     formAction={saveInfoAction({
                       fieldName: 'name',
@@ -87,7 +87,7 @@ export function InfoSection({ event }: { event: EventWithCompetePrograms }) {
             </DialogContent>
           </Dialog>
         </div>
-        <div className="flex justify-between pb-4 mb-4 border-b">
+        <div className="mb-4 flex justify-between border-b pb-4">
           <div>
             <p>Location</p>
             <p className="text-muted-foreground">
@@ -100,7 +100,7 @@ export function InfoSection({ event }: { event: EventWithCompetePrograms }) {
               checked ? setDialogType('location') : setDialogType(null)
             }
           >
-            <DialogTrigger className="underline leading-6 mb-auto text-sm font-medium">
+            <DialogTrigger className="mb-auto text-sm font-medium leading-6 underline">
               Edit
             </DialogTrigger>
             <DialogContent>
@@ -114,7 +114,7 @@ export function InfoSection({ event }: { event: EventWithCompetePrograms }) {
                     defaultValue={optimisticEvent?.location ?? ''}
                   />
                 </div>
-                <div className="flex mt-4">
+                <div className="mt-4 flex">
                   <SubmitButton
                     formAction={saveInfoAction({
                       fieldName: 'location',
@@ -130,7 +130,7 @@ export function InfoSection({ event }: { event: EventWithCompetePrograms }) {
             </DialogContent>
           </Dialog>
         </div>
-        <div className="flex justify-between pb-4 mb-4 border-b">
+        <div className="mb-4 flex justify-between border-b pb-4">
           <div>
             <p>Start date</p>
             <p className="text-muted-foreground">
@@ -143,7 +143,7 @@ export function InfoSection({ event }: { event: EventWithCompetePrograms }) {
               checked ? setDialogType('startedAt') : setDialogType(null)
             }
           >
-            <DialogTrigger className="underline leading-6 mb-auto text-sm font-medium">
+            <DialogTrigger className="mb-auto text-sm font-medium leading-6 underline">
               Edit
             </DialogTrigger>
             <DialogContent>
@@ -161,7 +161,7 @@ export function InfoSection({ event }: { event: EventWithCompetePrograms }) {
                     )}
                   />
                 </div>
-                <div className="flex mt-4">
+                <div className="mt-4 flex">
                   <SubmitButton
                     formAction={saveInfoAction({
                       fieldName: 'startedAt',
@@ -177,7 +177,7 @@ export function InfoSection({ event }: { event: EventWithCompetePrograms }) {
             </DialogContent>
           </Dialog>
         </div>
-        <div className="flex justify-between pb-4 mb-8 border-b">
+        <div className="mb-8 flex justify-between border-b pb-4">
           <div>
             <p>End date</p>
             <p className="text-muted-foreground">
@@ -190,7 +190,7 @@ export function InfoSection({ event }: { event: EventWithCompetePrograms }) {
               checked ? setDialogType('endedAt') : setDialogType(null)
             }
           >
-            <DialogTrigger className="underline leading-6 mb-auto text-sm font-medium">
+            <DialogTrigger className="mb-auto text-sm font-medium leading-6 underline">
               Edit
             </DialogTrigger>
             <DialogContent>
@@ -208,7 +208,7 @@ export function InfoSection({ event }: { event: EventWithCompetePrograms }) {
                     )}
                   />
                 </div>
-                <div className="flex mt-4">
+                <div className="mt-4 flex">
                   <SubmitButton
                     formAction={saveInfoAction({
                       fieldName: 'endedAt',

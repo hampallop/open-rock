@@ -47,7 +47,7 @@ export function ProgramNameEditDialog({
           <div>
             <Input name="programName" defaultValue={programName} />
           </div>
-          <div className="flex mt-4">
+          <div className="mt-4 flex">
             <SubmitButton
               formAction={async (formData) => {
                 const programName = await updateprogramNameAction({
