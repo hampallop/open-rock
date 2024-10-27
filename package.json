@@ -6,7 +6,9 @@
     "start": "next start",
     "showIP": "echo \"Mobile: http://`ifconfig | grep \"inet \" | grep -v 127.0.0.1 | cut -d\\  -f2`:3000\\n\"",
     "update-types": "supabase gen types --lang=typescript --project-id \"$PROJECT_REF\" > database.types.ts && prettier database.types.ts --write",
-    "lint": "next lint"
+    "lint": "next lint",
+    "lint:debug": "eslint ./ --debug",
+    "lint:fix": "eslint ./ --fix"
   },
   "dependencies": {
     "@radix-ui/react-accordion": "^1.2.1",
@@ -39,7 +41,9 @@
     "@types/node": "20.10.6",
     "@types/react": "18.2.46",
     "@types/react-dom": "18.2.18",
+    "@typescript-eslint/parser": "^8.11.0",
     "eslint-config-next": "14.2.15",
+    "eslint-plugin-tailwindcss": "^3.17.5",
     "postcss": "8.4.33",
     "supabase": "^1.200.3",
     "tailwind-merge": "^2.5.2",
