@@ -23,6 +23,7 @@ import { toast } from 'sonner'
 
 import { cn } from '@/lib/utils'
 import { createClient } from '@/utils/supabase/client'
+import { AppNavbar } from '@/components/app-layout'
 
 export function AthletesScreen({
   athletes: initialAthletes,
@@ -46,7 +47,7 @@ export function AthletesScreen({
 
   return (
     <>
-      <nav className="flex min-h-16 items-center justify-between px-5 py-3">
+      <AppNavbar>
         <CreateAthleteDialog
           onSave={(newAthlete) => {
             setAthletes([...athletes, newAthlete])
@@ -56,11 +57,11 @@ export function AthletesScreen({
             <PlusIcon />
           </Button>
         </CreateAthleteDialog>
-      </nav>
+      </AppNavbar>
       <div className="flex flex-col bg-background px-5">
-        <h1 className="mb-4 text-3xl font-medium">Athletes</h1>
+        <h1 className="mb-4 mt-2 text-3xl font-medium">Athletes</h1>
       </div>
-      <div className="flex-grow overflow-y-auto px-5 py-2">
+      <div className="grow overflow-y-auto px-5 py-2">
         <div className="flex flex-col">
           {athletes.map((athlete) => (
             <Link

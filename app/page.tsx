@@ -1,3 +1,4 @@
+import { AppLayout, AppNavbar } from '@/components/app-layout'
 import { EventList } from '@/components/event-list'
 import { FooterAuth } from '@/components/footer-auth'
 import { ThemeSwitcher } from '@/components/theme-switcher'
@@ -6,7 +7,7 @@ import { createClient } from '@/utils/supabase/server'
 
 function Navbar() {
   return (
-    <nav className="flex min-h-16 items-center justify-between px-5 py-3">
+    <AppNavbar>
       <Button
         asChild
         className="ml-auto rounded-full p-2"
@@ -14,7 +15,7 @@ function Navbar() {
       >
         <ThemeSwitcher />
       </Button>
-    </nav>
+    </AppNavbar>
   )
 }
 
@@ -27,10 +28,10 @@ export default async function Home() {
   }
 
   return (
-    <main className="mx-auto flex max-h-screen min-h-screen max-w-screen-md flex-col">
+    <AppLayout>
       <Navbar />
       <EventList title="Events" events={events} />
       <FooterAuth />
-    </main>
+    </AppLayout>
   )
 }

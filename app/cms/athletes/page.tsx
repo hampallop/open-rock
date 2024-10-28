@@ -1,4 +1,5 @@
 import { AthletesScreen } from '@/app/cms/athletes/screen'
+import { AppLayout } from '@/components/app-layout'
 import { FooterAuth } from '@/components/footer-auth'
 import { createClient } from '@/utils/supabase/client'
 
@@ -11,9 +12,9 @@ export default async function AthletesPage() {
   }
 
   return (
-    <main className="mx-auto flex max-h-screen min-h-screen max-w-screen-md flex-col">
+    <AppLayout>
       <AthletesScreen athletes={athletes} />
       <FooterAuth />
-    </main>
+    </AppLayout>
   )
 }

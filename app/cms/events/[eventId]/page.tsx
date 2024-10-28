@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/button'
 import { ChevronLeftIcon, PencilIcon } from 'lucide-react'
 import Link from 'next/link'
 import { Separator } from '@/components/ui/separator'
+import { AppLayout, AppNavbar } from '@/components/app-layout'
 
 async function queryEventWithCompetePrograms(eventId: string) {
   const supabase = await createClient()
@@ -31,7 +32,7 @@ const sortRounds = (a: CompeteRound, b: CompeteRound) =>
 
 function Navbar({ eventId }: { eventId: string }) {
   return (
-    <nav className="flex min-h-16 items-center justify-between px-5 py-3">
+    <AppNavbar>
       <Link href={'/cms/events'} className="flex items-center">
         <ChevronLeftIcon />
         <span className="ml-1">Manage events</span>
@@ -41,7 +42,7 @@ function Navbar({ eventId }: { eventId: string }) {
           <PencilIcon size={16} />
         </Link>
       </Button>
-    </nav>
+    </AppNavbar>
   )
 }
 
@@ -59,13 +60,11 @@ export default async function EventViewPage({
     return <div>Event not found</div>
   }
 
-  console.log('event', event)
-
   return (
-    <main className="mx-auto flex max-h-screen min-h-screen max-w-screen-md flex-col">
+    <AppLayout>
       <Navbar eventId={eventId} />
       <section className="px-5">
-        <h1 className="mb-4 text-3xl font-medium">{event.name}</h1>
+        <h1 className="mb-4 mt-2 text-3xl font-medium">{event.name}</h1>
         <p className="text-lg text-muted-foreground">{event.location}</p>
         <p className="">
           {format(event.startedAt, 'PPP')} - {format(event.endedAt, 'PPP')}
@@ -79,7 +78,7 @@ export default async function EventViewPage({
         <div className="flex flex-col gap-4">
           {event.competePrograms.map((program) => (
             <section key={program.id}>
-              <h3 className="text-md font-medium">{program.name}</h3>
+              <h3 className="font-medium">{program.name}</h3>
               <div className="grid grid-cols-3 gap-2">
                 {program.competeRounds.sort(sortRounds).map((round) => (
                   <Link
@@ -95,6 +94,6 @@ export default async function EventViewPage({
           ))}
         </div>
       </section>
-    </main>
+    </AppLayout>
   )
 }

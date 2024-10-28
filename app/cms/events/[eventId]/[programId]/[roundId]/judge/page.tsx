@@ -1,4 +1,5 @@
 import { JudgeScreen } from '@/app/cms/events/[eventId]/[programId]/[roundId]/judge/judge-screen'
+import { AppLayout } from '@/components/app-layout'
 import { ChevronLeftIcon } from 'lucide-react'
 import Link from 'next/link'
 
@@ -32,9 +33,9 @@ export default async function JudgePage({
   const { eventId, programId, roundId } = await params
 
   return (
-    <main className="mx-auto flex min-h-screen max-w-screen-md flex-col">
+    <AppLayout>
       <Navbar eventId={eventId} programId={programId} roundId={roundId} />
       <JudgeScreen />
-    </main>
+    </AppLayout>
   )
 }

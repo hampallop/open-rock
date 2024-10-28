@@ -44,7 +44,7 @@ export function InfoSection({ event }: { event: EventWithCompetePrograms }) {
 
   return (
     <>
-      <h1 className="mb-8 text-3xl font-medium">Edit event</h1>
+      <h1 className="mb-8 mt-2 text-3xl font-medium">Edit event</h1>
       <div className="flex flex-col gap-2">
         <div className="mb-4 flex justify-between border-b pb-4">
           <div>

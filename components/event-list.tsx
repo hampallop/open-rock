@@ -69,7 +69,7 @@ export function EventList({
           </Button>
         </div>
       </div>
-      <div className="flex-grow overflow-y-auto px-5 py-2">
+      <div className="grow overflow-y-auto px-5 py-2">
         {activeEvents.length > 0 ? (
           activeEvents.map((event) => (
             <EventCard event={event} key={event.id} isCms={isCms} />

@@ -4,6 +4,7 @@ import { createClient } from '@/utils/supabase/server'
 import { QueryData } from '@supabase/supabase-js'
 import { ProgramSection } from '@/app/cms/events/[eventId]/edit/program'
 import { InfoSection } from '@/app/cms/events/[eventId]/edit/info'
+import { AppLayout, AppNavbar } from '@/components/app-layout'
 
 async function queryEventWithCompetePrograms(eventId: string) {
   const supabase = await createClient()
@@ -22,12 +23,12 @@ export type EventWithCompetePrograms = QueryData<
 
 function Navbar({ eventId }: { eventId: string }) {
   return (
-    <nav className="flex min-h-16 items-center justify-between px-5 py-3">
+    <AppNavbar>
       <Link href={`/cms/events/${eventId}`} className="flex items-center">
         <ChevronLeftIcon />
         <span className="ml-1">Back</span>
       </Link>
-    </nav>
+    </AppNavbar>
   )
 }
 
@@ -43,14 +44,13 @@ export default async function EventEditPage({
   if (!event) {
     return <div>Event not found</div>
   }
-  console.log('event', JSON.stringify(event, null, 2))
   return (
-    <main className="mx-auto flex min-h-screen max-w-screen-md flex-col">
+    <AppLayout>
       <Navbar eventId={eventId} />
-      <section className="px-5">
+      <section className="grow overflow-y-auto px-5">
         <InfoSection event={event} />
         <ProgramSection competePrograms={event?.competePrograms ?? []} />
       </section>
-    </main>
+    </AppLayout>
   )
 }

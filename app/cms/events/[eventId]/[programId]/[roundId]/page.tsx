@@ -3,6 +3,7 @@ import Link from 'next/link'
 import { createClient } from '@/utils/supabase/server'
 import { QueryData } from '@supabase/supabase-js'
 import { Button } from '@/components/ui/button'
+import { AppLayout, AppNavbar } from '@/components/app-layout'
 
 async function queryRoundWithProgram(roundId: string) {
   const supabase = await createClient()
@@ -20,12 +21,12 @@ export type RoundWithProgram = QueryData<
 
 function Navbar({ eventId }: { eventId: string }) {
   return (
-    <nav className="flex min-h-16 items-center justify-between px-5 py-3">
+    <AppNavbar>
       <Link href={`/cms/events/${eventId}`} className="flex items-center">
         <ChevronLeftIcon />
         <span className="ml-1">Back</span>
       </Link>
-    </nav>
+    </AppNavbar>
   )
 }
 
@@ -41,12 +42,11 @@ export default async function EventEditPage({
   if (!roundData) {
     return <div>Program not found</div>
   }
-  console.log('program', JSON.stringify(roundData, null, 2))
   return (
-    <main className="mx-auto flex min-h-screen max-w-screen-md flex-col">
+    <AppLayout>
       <Navbar eventId={eventId} />
       <section className="flex grow flex-col px-5">
-        <h1 className="mb-4 text-3xl font-medium">
+        <h1 className="mb-4 mt-2 text-3xl font-medium">
           {roundData.competeProgram?.name}
           <br />
           {roundData.name}
@@ -57,6 +57,6 @@ export default async function EventEditPage({
           </Link>
         </Button>
       </section>
-    </main>
+    </AppLayout>
   )
 }
