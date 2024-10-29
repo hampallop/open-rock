@@ -8,13 +8,15 @@ import { createClient } from '@/utils/supabase/server'
 function Navbar() {
   return (
     <AppNavbar>
-      <Button
-        asChild
-        className="ml-auto rounded-full p-2"
-        variant={'secondary'}
-      >
-        <ThemeSwitcher />
-      </Button>
+      <div className="">
+        <Button
+          asChild
+          className="ml-auto rounded-full p-2"
+          variant={'secondary'}
+        >
+          <ThemeSwitcher />
+        </Button>
+      </div>
     </AppNavbar>
   )
 }

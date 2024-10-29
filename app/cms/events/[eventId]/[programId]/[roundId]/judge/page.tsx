@@ -1,5 +1,5 @@
 import { JudgeScreen } from '@/app/cms/events/[eventId]/[programId]/[roundId]/judge/judge-screen'
-import { AppLayout } from '@/components/app-layout'
+import { AppLayout, AppNavbar } from '@/components/app-layout'
 import { ChevronLeftIcon } from 'lucide-react'
 import Link from 'next/link'
 
@@ -13,15 +13,22 @@ function Navbar({
   roundId: string
 }) {
   return (
-    <nav className="flex min-h-16 items-center justify-between px-5 py-3">
-      <Link
-        href={`/cms/events/${eventId}/${programId}/${roundId}`}
-        className="flex items-center"
-      >
-        <ChevronLeftIcon />
-        <span className="ml-1">Back</span>
-      </Link>
-    </nav>
+    <AppNavbar>
+      <div className="flex items-center">
+        <Link
+          href={`/cms/events/${eventId}/${programId}/${roundId}`}
+          className="flex"
+        >
+          <ChevronLeftIcon />
+          <span className="ml-1">Back</span>
+        </Link>
+      </div>
+      <div className="text-center">
+        <p className="font-medium leading-tight">Semi-Final</p>
+        <p className="leading-tight text-muted-foreground">Route 3</p>
+      </div>
+      <div className="opacity-0">Empty</div>
+    </AppNavbar>
   )
 }
 

@@ -44,9 +44,7 @@ export function JudgeScreen() {
   return (
     <section className="flex grow flex-col px-5">
       <div className="flex flex-col items-center justify-center">
-        <p className="text-base font-medium">Semi Final</p>
-        <p className="text-base font-medium text-muted-foreground">Route 3</p>
-        <p className="text-3xl font-bold">Name</p>
+        <p className="mt-2 text-3xl font-bold">Name</p>
       </div>
       <div className="mt-16 flex items-center justify-between gap-2">
         <JudgeButton

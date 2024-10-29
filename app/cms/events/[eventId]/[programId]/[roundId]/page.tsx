@@ -22,10 +22,12 @@ export type RoundWithProgram = QueryData<
 function Navbar({ eventId }: { eventId: string }) {
   return (
     <AppNavbar>
-      <Link href={`/cms/events/${eventId}`} className="flex items-center">
-        <ChevronLeftIcon />
-        <span className="ml-1">Back</span>
-      </Link>
+      <div className="flex items-center">
+        <Link href={`/cms/events/${eventId}`} className="flex">
+          <ChevronLeftIcon />
+          <span className="ml-1">Back</span>
+        </Link>
+      </div>
     </AppNavbar>
   )
 }

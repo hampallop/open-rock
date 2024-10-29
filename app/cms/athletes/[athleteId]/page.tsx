@@ -25,10 +25,12 @@ export default async function AthleteViewPage({
   return (
     <AppLayout>
       <AppNavbar>
-        <Link href={'/cms/athletes'} className="flex items-center">
-          <ChevronLeftIcon />
-          <span className="ml-1">Manage athletes</span>
-        </Link>
+        <div className="flex items-center">
+          <Link href={'/cms/athletes'} className="flex">
+            <ChevronLeftIcon />
+            <span className="ml-1">Manage athletes</span>
+          </Link>
+        </div>
       </AppNavbar>
       <div className="flex flex-col bg-background px-5">
         <h1 className="mb-4 mt-2 text-3xl font-medium">{athlete.name}</h1>

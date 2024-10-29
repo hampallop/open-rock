@@ -33,15 +33,23 @@ const sortRounds = (a: CompeteRound, b: CompeteRound) =>
 function Navbar({ eventId }: { eventId: string }) {
   return (
     <AppNavbar>
-      <Link href={'/cms/events'} className="flex items-center">
-        <ChevronLeftIcon />
-        <span className="ml-1">Manage events</span>
-      </Link>
-      <Button asChild className="h-fit rounded-full p-3" variant={'secondary'}>
-        <Link href={`/cms/events/${eventId}/edit`}>
-          <PencilIcon size={16} />
+      <div className="flex items-center">
+        <Link href={'/cms/events'} className="flex">
+          <ChevronLeftIcon />
+          <span className="ml-1">Manage events</span>
         </Link>
-      </Button>
+      </div>
+      <div className="flex justify-end">
+        <Button
+          asChild
+          className="h-fit rounded-full p-3"
+          variant={'secondary'}
+        >
+          <Link href={`/cms/events/${eventId}/edit`}>
+            <PencilIcon size={16} />
+          </Link>
+        </Button>
+      </div>
     </AppNavbar>
   )
 }

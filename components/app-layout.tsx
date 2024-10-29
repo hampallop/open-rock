@@ -8,7 +8,7 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
 
 export function AppNavbar({ children }: { children: React.ReactNode }) {
   return (
-    <nav className="flex min-h-10 items-center justify-between px-5 py-0 sm:py-3">
+    <nav className="grid min-h-10 auto-cols-fr grid-flow-col items-center px-5 py-0 sm:py-3">
       {children}
     </nav>
   )
