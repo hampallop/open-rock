@@ -13,6 +13,7 @@ import { useState } from 'react'
 import { SearchIcon, XIcon } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { RoundWithProgram } from '@/app/cms/events/[eventId]/[programId]/[roundId]/page'
+import Link from 'next/link'
 
 export function AthleteList({
   athletes,
@@ -24,7 +25,7 @@ export function AthleteList({
   const [selectedAthletes, setSelectedAthlete] = useState(
     registeredAthletes
       .map((registeredAthlete) => registeredAthlete.athlete)
-      .filter(Boolean),
+      .filter((athlete) => !!athlete),
   )
   const [open, setOpen] = useState(false)
 
@@ -47,12 +48,14 @@ export function AthleteList({
       <div className="flex flex-col space-y-2">
         {selectedAthletes.map((athlete) => (
           <div
-            key={athlete?.id}
-            className="flex items-center rounded-xl border p-2"
+            key={athlete.id}
+            className="flex items-center rounded-xl border px-4 py-2"
           >
-            <span>{athlete?.name}</span>
+            <Link href={`/cms/athletes/${athlete.id}`} className="underline">
+              {athlete.name}
+            </Link>
             <Button
-              className="ml-auto rounded-full"
+              className="-mr-3 ml-auto rounded-full"
               variant="ghost"
               size="icon"
               onClick={() =>
