@@ -1,0 +1,8 @@
+When importing from lucide-react, use the postfixed Icon name.
+For example, use `SearchIcon` instead of `Search`.
+
+Try to keep the code base as functional for ease of readability as much as possible.
+
+Use name export instead of default export for components.
+When create a component use function keyword instead of arrow function.
+For example, `export function SearchBox() {}` instead of `export const SearchBox = () => {}`.

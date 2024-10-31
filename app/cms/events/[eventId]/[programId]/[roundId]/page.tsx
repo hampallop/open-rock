@@ -4,6 +4,14 @@ import { createClient } from '@/utils/supabase/server'
 import { QueryData } from '@supabase/supabase-js'
 import { Button } from '@/components/ui/button'
 import { AppLayout, AppNavbar } from '@/components/app-layout'
+import { AthleteList } from '@/app/cms/events/[eventId]/[programId]/[roundId]/list'
+
+async function queryAthletes() {
+  const supabase = await createClient()
+  const response = await supabase.from('athletes').select('*')
+
+  return response
+}
 
 async function queryRoundWithProgram(roundId: string) {
   const supabase = await createClient()
@@ -41,9 +49,17 @@ export default async function EventEditPage({
 
   const { data: roundData, error: _error } =
     await queryRoundWithProgram(roundId)
+
+  const { data: athletes, error: _athletesError } = await queryAthletes()
+
   if (!roundData) {
     return <div>Program not found</div>
   }
+
+  if (!athletes) {
+    return <div>Athletes not found</div>
+  }
+
   return (
     <AppLayout>
       <Navbar eventId={eventId} />
@@ -53,6 +69,7 @@ export default async function EventEditPage({
           <br />
           {roundData.name}
         </h1>
+        <AthleteList athletes={athletes} />
         <Button asChild className="mt-10">
           <Link href={`/cms/events/${eventId}/${programId}/${roundId}/judge`}>
             Judge
