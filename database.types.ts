@@ -113,6 +113,45 @@ export type Database = {
           },
         ]
       }
+      competeRoundAthletes: {
+        Row: {
+          athleteId: string
+          competeRoundId: string
+          createdAt: string
+          id: number
+          updatedAt: string
+        }
+        Insert: {
+          athleteId: string
+          competeRoundId: string
+          createdAt?: string
+          id?: number
+          updatedAt?: string
+        }
+        Update: {
+          athleteId?: string
+          competeRoundId?: string
+          createdAt?: string
+          id?: number
+          updatedAt?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: 'competeRoundAthletes_athleteId_fkey'
+            columns: ['athleteId']
+            isOneToOne: false
+            referencedRelation: 'athletes'
+            referencedColumns: ['id']
+          },
+          {
+            foreignKeyName: 'competeRoundAthletes_competeRoundId_fkey'
+            columns: ['competeRoundId']
+            isOneToOne: false
+            referencedRelation: 'competeRounds'
+            referencedColumns: ['id']
+          },
+        ]
+      }
       competeRounds: {
         Row: {
           competeProgramId: string

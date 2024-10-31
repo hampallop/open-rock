@@ -17,7 +17,9 @@ async function queryRoundWithProgram(roundId: string) {
   const supabase = await createClient()
   const response = await supabase
     .from('competeRounds')
-    .select('*, competeProgram:competePrograms(*)')
+    .select(
+      '*, competeProgram:competePrograms(*), competeRoundAthletes(*, athlete:athletes(*))',
+    )
     .eq('id', roundId)
     .single()
 
@@ -49,6 +51,7 @@ export default async function EventEditPage({
 
   const { data: roundData, error: _error } =
     await queryRoundWithProgram(roundId)
+  console.log('roundData', roundData)
 
   const { data: athletes, error: _athletesError } = await queryAthletes()
 
@@ -69,7 +72,10 @@ export default async function EventEditPage({
           <br />
           {roundData.name}
         </h1>
-        <AthleteList athletes={athletes} />
+        <AthleteList
+          athletes={athletes}
+          registeredAthletes={roundData.competeRoundAthletes}
+        />
         <Button asChild className="mt-10">
           <Link href={`/cms/events/${eventId}/${programId}/${roundId}/judge`}>
             Judge

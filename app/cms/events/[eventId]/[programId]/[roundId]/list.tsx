@@ -12,13 +12,26 @@ import {
 import { useState } from 'react'
 import { SearchIcon, XIcon } from 'lucide-react'
 import { Button } from '@/components/ui/button'
+import { RoundWithProgram } from '@/app/cms/events/[eventId]/[programId]/[roundId]/page'
 
-export function AthleteList({ athletes }: { athletes: Tables<'athletes'>[] }) {
-  const [selectedAthletes, setSelectedAthlete] = useState<string[]>([])
+export function AthleteList({
+  athletes,
+  registeredAthletes = [],
+}: {
+  athletes: Tables<'athletes'>[]
+  registeredAthletes: RoundWithProgram['competeRoundAthletes']
+}) {
+  const [selectedAthletes, setSelectedAthlete] = useState(
+    registeredAthletes
+      .map((registeredAthlete) => registeredAthlete.athlete)
+      .filter(Boolean),
+  )
   const [open, setOpen] = useState(false)
 
+  const selectedAthleteIds = selectedAthletes.map((athlete) => athlete?.id)
+
   const filteredAthletes = athletes.filter(
-    (athlete) => !selectedAthletes.includes(athlete.name),
+    (athlete) => !selectedAthleteIds.includes(athlete.id),
   )
 
   return (
@@ -34,10 +47,10 @@ export function AthleteList({ athletes }: { athletes: Tables<'athletes'>[] }) {
       <div className="flex flex-col space-y-2">
         {selectedAthletes.map((athlete) => (
           <div
-            key={athlete}
+            key={athlete?.id}
             className="flex items-center rounded-xl border p-2"
           >
-            <span>{athlete}</span>
+            <span>{athlete?.name}</span>
             <Button
               className="ml-auto rounded-full"
               variant="ghost"
@@ -65,11 +78,10 @@ export function AthleteList({ athletes }: { athletes: Tables<'athletes'>[] }) {
               {filteredAthletes.map((athlete) => (
                 <CommandItem
                   key={athlete.id}
-                  onSelect={(value) => {
-                    setSelectedAthlete([...selectedAthletes, value])
+                  onSelect={() => {
+                    setSelectedAthlete([...selectedAthletes, athlete])
                     setOpen(false)
                   }}
-                  value={athlete.name}
                 >
                   {athlete.name}
                 </CommandItem>
