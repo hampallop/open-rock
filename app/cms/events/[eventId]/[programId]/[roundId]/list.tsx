@@ -14,13 +14,17 @@ import { SearchIcon, XIcon } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { RoundWithProgram } from '@/app/cms/events/[eventId]/[programId]/[roundId]/page'
 import Link from 'next/link'
+import { createClient } from '@/utils/supabase/client'
+import { toast } from 'sonner'
 
 export function AthleteList({
   athletes,
   registeredAthletes = [],
+  roundId,
 }: {
   athletes: Tables<'athletes'>[]
   registeredAthletes: RoundWithProgram['competeRoundAthletes']
+  roundId: string
 }) {
   const [selectedAthletes, setSelectedAthlete] = useState(
     registeredAthletes
@@ -28,6 +32,32 @@ export function AthleteList({
       .filter((athlete) => !!athlete),
   )
   const [open, setOpen] = useState(false)
+
+  const supabase = createClient()
+
+  const addMoreAthlete = async (athlete: Tables<'athletes'>) => {
+    setSelectedAthlete([...selectedAthletes, athlete])
+
+    await supabase.from('competeRoundAthletes').insert({
+      competeRoundId: roundId,
+      athleteId: athlete.id,
+    })
+
+    toast.success('Athlete added')
+  }
+  const removeAthlete = async (athlete: Tables<'athletes'>) => {
+    setSelectedAthlete(
+      selectedAthletes.filter((selectedAthlete) => selectedAthlete !== athlete),
+    )
+
+    await supabase
+      .from('competeRoundAthletes')
+      .delete()
+      .eq('competeRoundId', roundId)
+      .eq('athleteId', athlete.id)
+
+    toast.success('Athlete removed')
+  }
 
   const selectedAthleteIds = selectedAthletes.map((athlete) => athlete?.id)
 
@@ -58,13 +88,15 @@ export function AthleteList({
               className="-mr-3 ml-auto rounded-full"
               variant="ghost"
               size="icon"
-              onClick={() =>
-                setSelectedAthlete(
-                  selectedAthletes.filter(
-                    (selectedAthlete) => selectedAthlete !== athlete,
-                  ),
-                )
-              }
+              onClick={() => {
+                if (
+                  confirm(
+                    `Are you sure you want to remove ${athlete.name} from this round?`,
+                  )
+                ) {
+                  removeAthlete(athlete)
+                }
+              }}
             >
               <XIcon size={16} />
             </Button>
@@ -82,7 +114,7 @@ export function AthleteList({
                 <CommandItem
                   key={athlete.id}
                   onSelect={() => {
-                    setSelectedAthlete([...selectedAthletes, athlete])
+                    addMoreAthlete(athlete)
                     setOpen(false)
                   }}
                 >

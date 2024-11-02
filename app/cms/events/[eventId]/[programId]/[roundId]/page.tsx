@@ -75,6 +75,7 @@ export default async function EventEditPage({
         <AthleteList
           athletes={athletes}
           registeredAthletes={roundData.competeRoundAthletes}
+          roundId={roundId}
         />
         <Button asChild className="mt-10">
           <Link href={`/cms/events/${eventId}/${programId}/${roundId}/judge`}>

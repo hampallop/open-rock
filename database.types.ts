@@ -118,21 +118,21 @@ export type Database = {
           athleteId: string
           competeRoundId: string
           createdAt: string
-          id: number
+          id: string
           updatedAt: string
         }
         Insert: {
           athleteId: string
           competeRoundId: string
           createdAt?: string
-          id?: number
+          id?: string
           updatedAt?: string
         }
         Update: {
           athleteId?: string
           competeRoundId?: string
           createdAt?: string
-          id?: number
+          id?: string
           updatedAt?: string
         }
         Relationships: [
