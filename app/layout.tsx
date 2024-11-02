@@ -2,9 +2,9 @@ import { ThemeProvider } from 'next-themes'
 import './globals.css'
 import { NuqsAdapter } from 'nuqs/adapters/next/app'
 import { Toaster } from '@/components/ui/sonner'
-import { DM_Sans } from 'next/font/google'
+import { Figtree } from 'next/font/google'
 
-const dmSans = DM_Sans({
+const figtree = Figtree({
   subsets: ['latin'],
   display: 'swap',
 })
@@ -25,7 +25,7 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
-    <html lang="en" className={dmSans.className} suppressHydrationWarning>
+    <html lang="en" className={figtree.className} suppressHydrationWarning>
       <head>
         <meta
           name="viewport"
