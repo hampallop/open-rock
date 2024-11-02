@@ -11,8 +11,9 @@ function Navbar() {
     <AppNavbar>
       <Button
         asChild
-        className="ml-auto rounded-full p-2"
+        className="ml-auto rounded-full"
         variant={'secondary'}
+        size="icon"
       >
         <Link href="/cms/events/create">
           <PlusIcon />

@@ -53,7 +53,11 @@ export function AthletesScreen({
             setAthletes([...athletes, newAthlete])
           }}
         >
-          <Button className="ml-auto rounded-full p-2" variant={'secondary'}>
+          <Button
+            className="ml-auto rounded-full"
+            variant={'secondary'}
+            size="icon"
+          >
             <PlusIcon />
           </Button>
         </CreateAthleteDialog>

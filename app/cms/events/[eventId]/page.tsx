@@ -42,11 +42,12 @@ function Navbar({ eventId }: { eventId: string }) {
       <div className="flex justify-end">
         <Button
           asChild
-          className="h-fit rounded-full p-3"
+          className="rounded-full"
           variant={'secondary'}
+          size="icon"
         >
           <Link href={`/cms/events/${eventId}/edit`}>
-            <PencilIcon size={16} />
+            <PencilIcon />
           </Link>
         </Button>
       </div>
